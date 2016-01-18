@@ -11,7 +11,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-UINT WM_HDN_ENDDRAG = ::RegisterWindowMessage("{8548F4AE-4A04-4c1e-9D0C-51CAEBEEA587}");
+UINT WM_HDN_ENDDRAG = ::RegisterWindowMessage(_T("{8548F4AE-4A04-4c1e-9D0C-51CAEBEEA587}"));
 /////////////////////////////////////////////////////////////////////////////
 // CHeaderCtrlExt
 IMPLEMENT_DYNAMIC(CHeaderCtrlExt, CHeaderCtrl)
