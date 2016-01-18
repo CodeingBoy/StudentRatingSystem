@@ -7,6 +7,7 @@
 #include "StudentRatingSystemDlg.h"
 #include "afxdialogex.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -60,6 +61,7 @@ void CStudentRatingSystemDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STUINFLIST, m_studentInfList);
 	DDX_Control(pDX, IDC_TAB_CLASS, m_classTab);
+	DDX_Control(pDX, IDC_LIST_EDIT, m_listEditor);
 }
 
 BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
@@ -68,6 +70,8 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_ADD, &CStudentRatingSystemDlg::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
+//	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
+ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
 END_MESSAGE_MAP()
 
 
@@ -102,6 +106,9 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
+	// 隐藏列表编辑文本框
+	m_listEditor.ShowWindow(SW_HIDE);
+
 	// Tab 初始化
 	m_classTab.InsertItem(0, _T("全局"));
 	m_classTab.InsertItem(1, _T("2015级软件工程4班"));
@@ -117,10 +124,10 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	m_studentInfList.InsertItem(0, _T("201510098016"));
 	m_studentInfList.SetItemText(0, 1, _T("黄飞豪"));
 
-	LONG lStyle;
-	lStyle = GetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE);//获取当前窗口style  
-	lStyle |= LVS_EDITLABELS; //设置style  
-	SetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE, lStyle);//设置style  
+// 	LONG lStyle;
+// 	lStyle = GetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE);//获取当前窗口style  
+// 	lStyle |= LVS_EDITLABELS; //设置style  
+// 	SetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE, lStyle);//设置style  
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -180,11 +187,32 @@ HCURSOR CStudentRatingSystemDlg::OnQueryDragIcon()
 void CStudentRatingSystemDlg::OnBnClickedAdd()
 {
 	m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("Hi~"));
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 1, _T("黄飞豪"));
 }
 
 
 void CStudentRatingSystemDlg::OnBnClickedDelete()
 {
 	m_studentInfList.SetFocus();
-	m_studentInfList.EditLabel(TRUE);
+	m_studentInfList.EditLabel(0);
+}
+
+
+void CStudentRatingSystemDlg::OnNMDblclkStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// 从 LPNMITEMACTIVATE 结构中获取选中行列信息
+	int row = pNMItemActivate->iItem;		// 行
+	int col = pNMItemActivate->iSubItem;	// 列
+
+	CRect rect;
+	m_studentInfList.GetSubItemRect(row, col, LVIR_LABEL , rect);
+	//m_studentInfList.GetItemRect(row, rect, LVIR_LABEL);
+	m_listEditor.SetParent(&m_studentInfList);
+	m_listEditor.MoveWindow(rect);
+	m_listEditor.SetWindowTextW(m_studentInfList.GetItemText(row, col));
+	m_listEditor.ShowWindow(SW_SHOW);
+
+	*pResult = 0;
 }
