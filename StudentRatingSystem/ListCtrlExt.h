@@ -125,13 +125,13 @@ protected:
 	int m_nRow, m_nColumn, m_nEditingRow, m_nEditingColumn, m_nSortColumn;
 
 protected:
-	static int CompareInt(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareDate(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareDouble(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareString(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareStringNoCase(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareNumberString(LPCSTR pLeftText, LPCSTR pRightText);
-	static int CompareNumberStringNoCase(LPCSTR pLeftText, LPCSTR pRightText);
+	static int CompareInt(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareDate(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareDouble(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareString(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareStringNoCase(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareNumberString(LPCWSTR pLeftText, LPCWSTR pRightText);
+	static int CompareNumberStringNoCase(LPCWSTR pLeftText, LPCWSTR pRightText);
 	static int Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 	static int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 

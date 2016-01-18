@@ -882,7 +882,7 @@ void CListCtrlExt::OnNmRclickHeader(NMHDR* pNMHDR, LRESULT* pResult)
 		for(int i = 0;i < nCount;++i)
 		{
 			if(! m_pHeaderCtrl->GetItem(i, &hdi))return;
-			if(hdi.cchTextMax == TEXT_LEN - 1)_tcscat(szText, TEXT_TAIL);
+			if(hdi.cchTextMax == TEXT_LEN - 1)_tcscat_s(szText, TEXT_TAIL);
 			UINT nFlags = MF_STRING;
 			if(! m_pHeaderCtrl->GetRemovable(i))nFlags |= MF_GRAYED | MF_CHECKED;
 			if(m_pHeaderCtrl->GetVisible(i))nFlags |= MF_CHECKED;
@@ -993,7 +993,7 @@ BOOL CListCtrlExt::SortItems(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
 	DWORD_PTR dwEditingItemData = 0;
 	if(m_nEditingRow >= 0 && m_nEditingRow < nCount)dwEditingItemData = GetItemDataInternal(m_nEditingRow);
 	CString dbg;
-	dbg.Format("\nBefore : %d", m_nEditingRow);
+	dbg.Format(_T("\nBefore : %d"), m_nEditingRow);
 	OutputDebugString(dbg);
 	m_fnCompare = pfnCompare;
 	m_dwSortData = dwData;
@@ -1001,7 +1001,7 @@ BOOL CListCtrlExt::SortItems(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
 	m_fnCompare = NULL;
 	m_dwSortData = NULL;
 	if(dwEditingItemData)m_nEditingRow = GetItemIndexFromData(dwEditingItemData);
-	dbg.Format("\nAfter : %d", m_nEditingRow);
+	dbg.Format(_T("\nAfter : %d"), m_nEditingRow);
 	OutputDebugString(dbg);
 
 	return bReturn;
@@ -1087,31 +1087,31 @@ int CListCtrlExt::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	return CompareString(sLeft, sRight);
 }
 
-int CListCtrlExt::CompareInt(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareInt(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
-	return (int)(atol(pLeftText) - atol(pRightText));
+	return (int)(_wtol(pLeftText) - _wtol(pRightText));
 }
 
-int CListCtrlExt::CompareDouble(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareDouble(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
-	return (int)(atof(pLeftText) - atof(pRightText));
+	return (int)(_wtof(pLeftText) - _wtof(pRightText));
 }
 
-int CListCtrlExt::CompareString(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareString(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
 	return CString(pLeftText).Compare(pRightText);
 }
 
-int CListCtrlExt::CompareNumberString(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareNumberString(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
-	LONGLONG l1 = atol(pLeftText);
-	LONGLONG l2 = atol(pRightText);
+	LONGLONG l1 = _wtol(pLeftText);
+	LONGLONG l2 = _wtol(pRightText);
 
 	if(l1 && l2 && (l1 - l2))
 	{
 		CString sTemp1, sTemp2;
-		sTemp1.Format("%ld", l1);
-		sTemp2.Format("%ld", l2);
+		sTemp1.Format(_T("%ld"), l1);
+		sTemp2.Format(_T("%ld"), l2);
 		CString left(pLeftText);
 		CString right(pRightText);
 		if(sTemp1.GetLength() == left.GetLength() && sTemp2.GetLength() == right.GetLength())return (int)(l1 - l2);
@@ -1120,16 +1120,16 @@ int CListCtrlExt::CompareNumberString(LPCSTR pLeftText, LPCSTR pRightText)
 	return CString(pLeftText).Compare(pRightText);
 }
 
-int CListCtrlExt::CompareNumberStringNoCase(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareNumberStringNoCase(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
-	LONGLONG l1 = atol(pLeftText);
-	LONGLONG l2 = atol(pRightText);
+	LONGLONG l1 = _wtol(pLeftText);
+	LONGLONG l2 = _wtol(pRightText);
 
 	if(l1 && l2 && (l1 - l2))
 	{
 		CString sTemp1, sTemp2;
-		sTemp1.Format("%ld",l1);
-		sTemp2.Format("%ld",l2);
+		sTemp1.Format(_T("%ld"),l1);
+		sTemp2.Format(_T("%ld"),l2);
 		CString left(pLeftText);
 		CString right(pRightText);
 		if(sTemp1.GetLength() == left.GetLength() && sTemp2.GetLength() == right.GetLength())return (int)(l1 - l2);
@@ -1138,12 +1138,12 @@ int CListCtrlExt::CompareNumberStringNoCase(LPCSTR pLeftText, LPCSTR pRightText)
 	return CString(pLeftText).CompareNoCase(pRightText);
 }
 
-int CListCtrlExt::CompareStringNoCase(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareStringNoCase(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
 	return CString(pLeftText).CompareNoCase(pRightText);
 }
 
-int CListCtrlExt::CompareDate(LPCSTR pLeftText, LPCSTR pRightText)
+int CListCtrlExt::CompareDate(LPCWSTR pLeftText, LPCWSTR pRightText)
 {
 	COleDateTime dL, dR;
 	dL.ParseDateTime(pLeftText);
