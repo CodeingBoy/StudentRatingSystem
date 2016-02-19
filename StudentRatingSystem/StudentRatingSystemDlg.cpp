@@ -108,18 +108,19 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 
 	m_studentInfList.InsertColumn(0, _T("学号"), LVCFMT_CENTER, 100);
 	m_studentInfList.InsertColumn(1, _T("姓名"), LVCFMT_CENTER, 60);
-	m_studentInfList.InsertColumn(2, _T("班级"), LVCFMT_CENTER, 60);
-	m_studentInfList.InsertColumn(3, _T("科目1成绩"), LVCFMT_CENTER, 80);
-	m_studentInfList.InsertColumn(4, _T("科目2成绩"), LVCFMT_CENTER, 80);
-	m_studentInfList.InsertColumn(5, _T("科目3成绩"), LVCFMT_CENTER, 80);
+	m_studentInfList.InsertColumn(2, _T("班级"), LVCFMT_CENTER, 150);
+	m_studentInfList.InsertColumn(3, _T("英语成绩"), LVCFMT_CENTER, 80);
+	m_studentInfList.InsertColumn(4, _T("数学成绩"), LVCFMT_CENTER, 80);
+	m_studentInfList.InsertColumn(5, _T("C++成绩"), LVCFMT_CENTER, 80);
+	m_studentInfList.InsertColumn(6, _T("是否学习标兵"), LVCFMT_CENTER, 100);
+	m_studentInfList.InsertColumn(6, _T("是否三好学生"), LVCFMT_CENTER, 100);
 
 	m_studentInfList.InsertItem(0, _T("209040501020"));
 	m_studentInfList.SetItemText(0, 1, _T("黄飞鸿"));
 
 	CRect Rect(CPoint(0, 0), CSize(100, 500));
 	m_Edit.Create(WS_CHILD | WS_TABSTOP | WS_BORDER, Rect, this, IDC_EDIT);
-	m_studentInfList.SetCellEditor(0, 0, &m_Edit);
-	m_studentInfList.SetCellEditor(0, 1, &m_Edit);
+	m_studentInfList.SetDefaultEditor(&m_Edit);
 	m_Edit.SetFont(m_studentInfList.GetFont());
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
