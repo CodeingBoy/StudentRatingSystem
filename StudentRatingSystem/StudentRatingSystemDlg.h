@@ -33,9 +33,13 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+	CEdit m_Edit;
 public:
 	CListCtrlExt m_studentInfList;
-	CTabCtrl m_classTab;
 	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedDelete();
+private:
+	
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

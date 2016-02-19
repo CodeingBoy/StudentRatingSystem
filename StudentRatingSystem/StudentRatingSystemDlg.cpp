@@ -59,7 +59,6 @@ void CStudentRatingSystemDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STUINFLIST, m_studentInfList);
-	DDX_Control(pDX, IDC_TAB_CLASS, m_classTab);
 }
 
 BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
@@ -68,6 +67,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_ADD, &CStudentRatingSystemDlg::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -102,11 +102,10 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	// Tab 初始化
-	m_classTab.InsertItem(0, _T("全局"));
-	m_classTab.InsertItem(1, _T("2015级软件工程4班"));
-
 	// List 初始化
+	m_studentInfList.SetGridBehaviour();
+	m_studentInfList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP | LVS_EX_INFOTIP);
+
 	m_studentInfList.InsertColumn(0, _T("学号"), LVCFMT_CENTER, 100);
 	m_studentInfList.InsertColumn(1, _T("姓名"), LVCFMT_CENTER, 60);
 	m_studentInfList.InsertColumn(2, _T("班级"), LVCFMT_CENTER, 60);
@@ -114,13 +113,14 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	m_studentInfList.InsertColumn(4, _T("科目2成绩"), LVCFMT_CENTER, 80);
 	m_studentInfList.InsertColumn(5, _T("科目3成绩"), LVCFMT_CENTER, 80);
 
-	m_studentInfList.InsertItem(0, _T("201510098016"));
-	m_studentInfList.SetItemText(0, 1, _T("黄飞豪"));
+	m_studentInfList.InsertItem(0, _T("209040501020"));
+	m_studentInfList.SetItemText(0, 1, _T("黄飞鸿"));
 
-	LONG lStyle;
-	lStyle = GetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE);//获取当前窗口style  
-	lStyle |= LVS_EDITLABELS; //设置style  
-	SetWindowLong(m_studentInfList.GetSafeHwnd(), GWL_STYLE, lStyle);//设置style  
+	CRect Rect(CPoint(0, 0), CSize(100, 500));
+	m_Edit.Create(WS_CHILD | WS_TABSTOP | WS_BORDER, Rect, this, IDC_EDIT);
+	m_studentInfList.SetCellEditor(0, 0, &m_Edit);
+	m_studentInfList.SetCellEditor(0, 1, &m_Edit);
+	m_Edit.SetFont(m_studentInfList.GetFont());
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -187,4 +187,18 @@ void CStudentRatingSystemDlg::OnBnClickedDelete()
 {
 	m_studentInfList.SetFocus();
 	m_studentInfList.EditLabel(TRUE);
+}
+
+
+int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | CS_DBLCLKS | LVS_REPORT;
+
+	//BOOL bResult = m_List.Create(dwStyle, CRect(0, 0, 0, 0), this, IDC_LIST);
+	
+
+	return 0;
 }
