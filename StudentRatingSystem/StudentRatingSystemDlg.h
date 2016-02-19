@@ -5,6 +5,7 @@
 #pragma once
 #include "afxcmn.h"
 
+#include "ListCtrlExt.h"
 
 // CStudentRatingSystemDlg ¶Ô»°¿ò
 class CStudentRatingSystemDlg : public CDialogEx
@@ -33,7 +34,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CListCtrl m_studentInfList;
+	CListCtrlExt m_studentInfList;
 	CTabCtrl m_classTab;
 	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedDelete();
