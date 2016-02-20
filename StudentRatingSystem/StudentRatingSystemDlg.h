@@ -56,4 +56,10 @@ public:
 	afx_msg void OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedevaluateaward1();
+	void evaluateAward1(std::list<StudentInf>* plist);
+	void evaluateAward2(std::list<StudentInf>* plist);
+	afx_msg void OnBnClickedevaluateaward2();
 };
+
+bool cmp_total(StudentInf first, StudentInf second);

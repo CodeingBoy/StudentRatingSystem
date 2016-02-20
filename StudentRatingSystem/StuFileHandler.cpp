@@ -71,6 +71,8 @@ bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 			break;
 		case 6:
 			inf.mark_subject3 = _wtof(pStr);
+
+			inf.mark_total = inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3;
 			break;
 		default:
 			TRACE(_T("???"));

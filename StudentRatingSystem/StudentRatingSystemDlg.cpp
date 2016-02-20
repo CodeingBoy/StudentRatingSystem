@@ -75,6 +75,8 @@ ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
 ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
 ON_NOTIFY(LVN_DELETEITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist)
 ON_NOTIFY(LVN_INSERTITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnInsertitemStuinflist)
+ON_BN_CLICKED(IDC_evaluateAward1, &CStudentRatingSystemDlg::OnBnClickedevaluateaward1)
+ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
 END_MESSAGE_MAP()
 
 
@@ -156,7 +158,7 @@ void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	mark[0].Format(_T("%.1f"), inf.mark_subject1);
 	mark[1].Format(_T("%.1f"), inf.mark_subject2);
 	mark[2].Format(_T("%.1f"), inf.mark_subject3);
-	mark[3].Format(_T("%.1f"), inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3);
+	mark[3].Format(_T("%.1f"), inf.mark_total);
 
 	m_studentInfList.InsertItem(newline_index, ID);
 	m_studentInfList.SetItemText(newline_index, 1, inf.name);
@@ -401,9 +403,106 @@ void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	
-	
 	if (m_studentInfList.GetItemCount() > 2)
 	RefreshAverage();
 
 	*pResult = 0;
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
+{
+	evaluateAward1(&StudentInf_list);
+}
+
+void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist){
+	StudentInf_list.sort(cmp_total); // 先从大到小排序
+
+	for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
+	StudentsListIterator != StudentInf_list.end();
+		++StudentsListIterator)
+	{
+		if (StudentsListIterator->mark_subject1 >= 75 &&
+			StudentsListIterator->mark_subject2 >= 75 && 
+			StudentsListIterator->mark_subject3 >= 75  )
+		{
+			for (int i = 0; i < m_studentInfList.GetItemCount() - 2;i++)
+			{
+				if (_wtof(m_studentInfList.GetItemText(i,0)) == StudentsListIterator->studentID)
+				{
+					m_studentInfList.SetItemText(i, 7, _T("是"));
+					m_studentInfList.SetCellColors(i, 7, RGB(134, 71, 63), -1);
+					StudentsListIterator->haveAward = 1;
+				}
+				else {
+					m_studentInfList.SetItemText(i, 7, _T("否"));
+					m_studentInfList.SetCellColors(i, 7, RGB(100, 106, 88), -1);
+				}
+			}
+			return; // 获奖名额只有一人，评定结束
+		}
+		
+	}
+}
+
+void CStudentRatingSystemDlg::evaluateAward2(std::list<StudentInf> *plist) {
+	StudentInf_list.sort(cmp_total); // 先从大到小排序
+
+	int num = 1;
+	const int totalNum = m_studentInfList.GetItemCount() - 2;
+
+	for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
+	StudentsListIterator != StudentInf_list.end();
+		++StudentsListIterator)
+	{
+		if (num <= (int)(totalNum * 0.05 + 0.5) && StudentsListIterator->haveAward != 1) // 不符合不评比
+		{
+
+			if (StudentsListIterator->mark_subject1 >= 75 &&
+				StudentsListIterator->mark_subject2 >= 75 &&
+				StudentsListIterator->mark_subject3 >= 75)
+			{
+				// 查找并填写
+				for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
+				{
+					if (_wtof(m_studentInfList.GetItemText(i, 0)) == StudentsListIterator->studentID)
+					{
+						m_studentInfList.SetItemText(i, 8, _T("是"));
+						m_studentInfList.SetCellColors(i, 8, RGB(134, 71, 63), -1);
+						StudentsListIterator->haveAward = 2;
+						break; // 已查找到，结束循环
+					}
+				}
+			}
+			num++;
+		}
+
+	}
+
+	// 没获奖的填写否
+	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
+	{
+		if (m_studentInfList.GetItemText(i, 8) != _T("是"))
+		{
+			m_studentInfList.SetItemText(i, 8, _T("否"));
+			m_studentInfList.SetCellColors(i, 8, RGB(100, 106, 88), -1);
+		}
+		// 这残酷的社会，连个安慰奖都没有 :(
+		// 这坑爹的支付宝，没敬业福就没有奖金 :(
+	}
+
+
+}
+
+bool cmp_total(StudentInf first, StudentInf second) {
+	if (first.mark_total <= second.mark_total)
+		return false;
+	else
+		return true;
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
+{
+	evaluateAward2(&StudentInf_list);
 }
