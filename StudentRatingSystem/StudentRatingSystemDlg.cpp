@@ -122,8 +122,8 @@ void CStudentRatingSystemDlg::PrepareList() // 初始化列表（仅执行一次）
 	m_studentInfList.InsertColumn(4, _T("数学成绩"), LVCFMT_CENTER, 80);
 	m_studentInfList.InsertColumn(5, _T("C++成绩"), LVCFMT_CENTER, 80);
 	m_studentInfList.InsertColumn(6, _T("总成绩"), LVCFMT_CENTER, 80);
-	m_studentInfList.InsertColumn(7, _T("是否学习标兵"), LVCFMT_CENTER, 100);
-	m_studentInfList.InsertColumn(8, _T("是否三好学生"), LVCFMT_CENTER, 100);
+	m_studentInfList.InsertColumn(7, _T("是否学习标兵"), LVCFMT_CENTER, 90);
+	m_studentInfList.InsertColumn(8, _T("是否三好学生"), LVCFMT_CENTER, 90);
 
 	CRect Rect(CPoint(0, 0), CSize(100, 500));
 	m_Edit.Create(WS_CHILD | WS_TABSTOP | WS_BORDER, Rect, this, IDC_EDIT);
