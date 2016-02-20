@@ -140,13 +140,11 @@ void CStudentRatingSystemDlg::PrepareList() // 初始化列表（仅执行一次）
 void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
 	m_studentInfList.DeleteAllItems();
 
-	m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("平均值"));
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 3, _T("N/A"));
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 4, _T("N/A"));
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 5, _T("N/A"));
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 6, _T("N/A"));
+	int averageIndex = m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("平均值"));
+	for (int i = 0; i < 4; i++)
+		m_studentInfList.SetItemText(averageIndex, i + 3, _T("N/A"));
 
-	m_studentInfList.InsertItem(m_studentInfList.GetItemCount()-1, _T("          +"));
+	m_studentInfList.InsertItem(m_studentInfList.GetItemCount() - 1, _T("          +"));
 }
 
 void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
@@ -176,16 +174,14 @@ void CStudentRatingSystemDlg::RefreshAverage() {
 	float average[4] = { 0,0,0,0 };
 	CalculateAverage(average);
 
+	int lastLineIndex = m_studentInfList.GetItemCount() - 1;
 	CString average_str[4];
-	average_str[0].Format(_T("%.1f"), average[0]);
-	average_str[1].Format(_T("%.1f"), average[1]);
-	average_str[2].Format(_T("%.1f"), average[2]);
-	average_str[3].Format(_T("%.1f"), average[3]);
-
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 3, average_str[0]);
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 4, average_str[1]);
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 5, average_str[2]);
-	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 6, average_str[3]);
+	for (int i = 0; i < 4;i++)
+	{
+		average_str[i].Format(_T("%.1f"), average[i]);
+		m_studentInfList.SetItemText(lastLineIndex, i + 3, average_str[i]);
+	}
+	
 }
 
 void CStudentRatingSystemDlg::CalculateAverage(float average[]) {
@@ -195,15 +191,16 @@ void CStudentRatingSystemDlg::CalculateAverage(float average[]) {
 	StudentsListIterator != StudentInf_list.end();
 		++StudentsListIterator)
 	{
+		// 累加起来
 		average[0] += StudentsListIterator->mark_subject1;
 		average[1] += StudentsListIterator->mark_subject2;
 		average[2] += StudentsListIterator->mark_subject3;
 	}
 	//average[3] = average[0] + average[1] + average[2];
 
-	int count = m_studentInfList.GetItemCount() - 2;
+	int studentNumber = m_studentInfList.GetItemCount() - 2;
 	for (int i = 0; i < 3; i++)
-		average[i] /= count;
+		average[i] /= studentNumber; // 除以学生数
 	average[3] = average[0] + average[1] + average[2]; // 偷个懒
 
 }
