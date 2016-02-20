@@ -33,19 +33,11 @@ protected:
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
-
 	void PrepareList();
-
 	void InitializeList();
-
 	void AddNewLine(StudentInf & inf);
-
 	void RefreshAverage();
-
 	void CalculateAverage(float average[]);
-
-	void CalculateAverage(float * average[4]);
-
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -53,15 +45,15 @@ protected:
 	CEdit m_Edit;
 public:
 	CMyListCtrlExt m_studentInfList;
-	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedDelete();
 private:
 	
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-//	afx_msg void OnNMDblclkStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedExport();
 	std::list<StudentInf> StudentInf_list;
 	afx_msg void OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 };

@@ -67,13 +67,14 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_ADD, &CStudentRatingSystemDlg::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
 	ON_WM_CREATE()
 //	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
 ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
 ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
 ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
+ON_NOTIFY(LVN_DELETEITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist)
+ON_NOTIFY(LVN_INSERTITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnInsertitemStuinflist)
 END_MESSAGE_MAP()
 
 
@@ -254,19 +255,15 @@ HCURSOR CStudentRatingSystemDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-//void CStudentRatingSystemDlg::showEditInList(int Row,int Column, CString &str){
-//}
-
-void CStudentRatingSystemDlg::OnBnClickedAdd()
-{
-	m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("Hi~"));
-}
-
-
 void CStudentRatingSystemDlg::OnBnClickedDelete()
 {
-	m_studentInfList.SetFocus();
-	m_studentInfList.EditLabel(TRUE);
+	int deletingIndex = m_studentInfList.GetSelectionMark();
+	if (deletingIndex <= m_studentInfList.GetItemCount() - 3)
+	{
+		
+		m_studentInfList.DeleteSelectedItems();
+	}
+	
 }
 
 
@@ -365,6 +362,48 @@ void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT 
 			RefreshAverage();
 	}
 
+
+	*pResult = 0;
+}
+
+
+void CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	if (pNMListView)
+	{
+		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
+
+		int deletingIndex = m_studentInfList.GetSelectionMark();
+		if (m_studentInfList.GetItemCount() > 2 && nItem <= m_studentInfList.GetItemCount() - 3) {
+			CString deletingItem_ID = m_studentInfList.GetItemText(deletingIndex, 0);
+			for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
+			StudentsListIterator != StudentInf_list.end();
+				++StudentsListIterator)
+			{
+				if (StudentsListIterator->studentID == _wtof(deletingItem_ID)) { // Ñ§ºÅÒ»ÖÂ
+					StudentInf_list.erase(StudentsListIterator);
+					break;
+				}
+			}
+			RefreshAverage();
+		}
+
+	}
+
+	*pResult = 0;
+}
+
+
+void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	
+	
+	if (m_studentInfList.GetItemCount() > 2)
+	RefreshAverage();
 
 	*pResult = 0;
 }
