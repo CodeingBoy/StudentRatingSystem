@@ -10,6 +10,7 @@
 
 #include <list>
 #include <algorithm>
+#include "afxwin.h"
 
 // CStudentRatingSystemDlg ¶Ô»°¿ò
 class CStudentRatingSystemDlg : public CDialogEx
@@ -60,6 +61,11 @@ public:
 	void evaluateAward1(std::list<StudentInf>* plist);
 	void evaluateAward2(std::list<StudentInf>* plist);
 	afx_msg void OnBnClickedevaluateaward2();
+	afx_msg void OnBnClickedDeleteall();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedUndo();
+//	CComboBox m_sort;
+	CComboBox m_sortBox;
 };
 
 bool cmp_total(StudentInf first, StudentInf second);

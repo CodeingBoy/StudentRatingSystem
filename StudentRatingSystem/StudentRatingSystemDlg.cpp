@@ -61,6 +61,8 @@ void CStudentRatingSystemDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STUINFLIST, m_studentInfList);
+	//  DDX_Control(pDX, IDC_SORT, m_sort);
+	DDX_Control(pDX, IDC_SORT, m_sortBox);
 }
 
 BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
@@ -77,6 +79,7 @@ ON_NOTIFY(LVN_DELETEITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnDeletei
 ON_NOTIFY(LVN_INSERTITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnInsertitemStuinflist)
 ON_BN_CLICKED(IDC_evaluateAward1, &CStudentRatingSystemDlg::OnBnClickedevaluateaward1)
 ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
+ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
 END_MESSAGE_MAP()
 
 
@@ -111,8 +114,18 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	// List 初始化
-	PrepareList();
+	PrepareList(); // List 初始化
+
+	// 初始化排序列表
+	m_sortBox.InsertString(0, _T("学号"));
+	m_sortBox.InsertString(1, _T("姓名"));
+	m_sortBox.InsertString(2, _T("班级"));
+	m_sortBox.InsertString(3, _T("英语成绩"));
+	m_sortBox.InsertString(4, _T("数学成绩"));
+	m_sortBox.InsertString(5, _T("C++成绩"));
+	m_sortBox.InsertString(6, _T("总成绩"));
+	m_sortBox.InsertString(7, _T("是否学习标兵"));
+	m_sortBox.InsertString(8, _T("是否三好学生"));
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -516,4 +529,21 @@ bool cmp_total(StudentInf first, StudentInf second) {
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 {
 	evaluateAward2(&StudentInf_list);
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedDeleteall()
+{
+	if (MessageBox(_T("您确定要清空列表吗？"), _T("确定？"), MB_ICONQUESTION | MB_YESNO)
+	== IDYES) {
+		InitializeList();
+		StudentInf_list.clear();
+	}
+	
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedUndo()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }
