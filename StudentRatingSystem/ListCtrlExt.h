@@ -214,7 +214,7 @@ protected:
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CListCtrlExt)
-	afx_msg BOOL OnNMDblclk(NMHDR* pNMHDR, LRESULT* pResult);
+	virtual afx_msg BOOL OnNMDblclk(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnColumnclick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHdnEnddrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNmRclickHeader(NMHDR* pNMHDR, LRESULT* pResult);

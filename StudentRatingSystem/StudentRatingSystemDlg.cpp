@@ -11,6 +11,7 @@
 #define new DEBUG_NEW
 #endif
 
+#define IDC_EDIT 1007
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -68,6 +69,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ADD, &CStudentRatingSystemDlg::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
 	ON_WM_CREATE()
+//	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
 END_MESSAGE_MAP()
 
 
@@ -103,6 +105,13 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// List 初始化
+	PrepareList();
+
+	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+}
+
+void CStudentRatingSystemDlg::PrepareList() // 初始化列表（仅执行一次）
+{
 	m_studentInfList.SetGridBehaviour();
 	m_studentInfList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP | LVS_EX_INFOTIP);
 
@@ -112,18 +121,51 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 	m_studentInfList.InsertColumn(3, _T("英语成绩"), LVCFMT_CENTER, 80);
 	m_studentInfList.InsertColumn(4, _T("数学成绩"), LVCFMT_CENTER, 80);
 	m_studentInfList.InsertColumn(5, _T("C++成绩"), LVCFMT_CENTER, 80);
-	m_studentInfList.InsertColumn(6, _T("是否学习标兵"), LVCFMT_CENTER, 100);
-	m_studentInfList.InsertColumn(6, _T("是否三好学生"), LVCFMT_CENTER, 100);
-
-	m_studentInfList.InsertItem(0, _T("209040501020"));
-	m_studentInfList.SetItemText(0, 1, _T("黄飞鸿"));
+	m_studentInfList.InsertColumn(6, _T("总成绩"), LVCFMT_CENTER, 80);
+	m_studentInfList.InsertColumn(7, _T("是否学习标兵"), LVCFMT_CENTER, 100);
+	m_studentInfList.InsertColumn(8, _T("是否三好学生"), LVCFMT_CENTER, 100);
 
 	CRect Rect(CPoint(0, 0), CSize(100, 500));
 	m_Edit.Create(WS_CHILD | WS_TABSTOP | WS_BORDER, Rect, this, IDC_EDIT);
 	m_studentInfList.SetDefaultEditor(&m_Edit);
 	m_Edit.SetFont(m_studentInfList.GetFont());
 
-	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+	InitializeList();
+}
+
+void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
+	m_studentInfList.DeleteAllItems();
+
+	m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("平均值"));
+
+	m_studentInfList.InsertItem(m_studentInfList.GetItemCount()-1, _T("          +"));
+}
+
+void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
+	int newline_index = m_studentInfList.GetItemCount() - 2; // 最后一行显示平均值，倒数第二行为预留
+
+	CString ID, mark[3];
+	ID.Format(_T("%f"), inf.studentID);
+	mark[0].Format(_T("%.2f"), inf.mark_subject1);
+	mark[1].Format(_T("%.2f"), inf.mark_subject2);
+	mark[2].Format(_T("%.2f"), inf.mark_subject3);
+
+	m_studentInfList.InsertItem(newline_index, ID);
+	m_studentInfList.SetItemText(newline_index, 1, inf.name);
+	m_studentInfList.SetItemText(newline_index, 2, inf.studentClass);
+	m_studentInfList.SetItemText(newline_index, 3, mark[0]);
+	m_studentInfList.SetItemText(newline_index, 4, mark[1]);
+	m_studentInfList.SetItemText(newline_index, 5, mark[2]);
+	m_studentInfList.SetItemText(newline_index, 6, _T("N/A"));
+	m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
+}
+
+void CStudentRatingSystemDlg::RefreshAverage() {
+	CalculateAverage();
+}
+
+void CStudentRatingSystemDlg::CalculateAverage() {
+
 }
 
 void CStudentRatingSystemDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -200,6 +242,6 @@ int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//BOOL bResult = m_List.Create(dwStyle, CRect(0, 0, 0, 0), this, IDC_LIST);
 	
-
 	return 0;
 }
+

@@ -5,7 +5,8 @@
 #pragma once
 #include "afxcmn.h"
 
-#include "ListCtrlExt.h"
+#include "MyListCtrlExt.h"
+#include "StudentInf.h"
 
 // CStudentRatingSystemDlg 对话框
 class CStudentRatingSystemDlg : public CDialogEx
@@ -29,17 +30,29 @@ protected:
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
+
+	void PrepareList();
+
+	void InitializeList();
+
+	void AddNewLine(StudentInf & inf);
+
+	void RefreshAverage();
+
+	void CalculateAverage();
+
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 	CEdit m_Edit;
 public:
-	CListCtrlExt m_studentInfList;
+	CMyListCtrlExt m_studentInfList;
 	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedDelete();
 private:
 	
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+//	afx_msg void OnNMDblclkStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 };
