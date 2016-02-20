@@ -48,6 +48,9 @@
     <ClInclude Include="MyListCtrlExt.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="StuFileHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StudentRatingSystem.cpp">
@@ -69,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MyListCtrlExt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StuFileHandler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -198,6 +198,7 @@
     <ClInclude Include="StudentInf.h" />
     <ClInclude Include="StudentRatingSystem.h" />
     <ClInclude Include="StudentRatingSystemDlg.h" />
+    <ClInclude Include="StuFileHandler.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +214,7 @@
     </ClCompile>
     <ClCompile Include="StudentRatingSystem.cpp" />
     <ClCompile Include="StudentRatingSystemDlg.cpp" />
+    <ClCompile Include="StuFileHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StudentRatingSystem.rc" />

@@ -6,6 +6,7 @@
 #include "StudentRatingSystem.h"
 #include "StudentRatingSystemDlg.h"
 #include "afxdialogex.h"
+#include "StuFileHandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -70,6 +71,8 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
 	ON_WM_CREATE()
 //	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
+ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
+ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
 END_MESSAGE_MAP()
 
 
@@ -144,11 +147,12 @@ void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
 void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	int newline_index = m_studentInfList.GetItemCount() - 2; // 最后一行显示平均值，倒数第二行为预留
 
-	CString ID, mark[3];
-	ID.Format(_T("%f"), inf.studentID);
-	mark[0].Format(_T("%.2f"), inf.mark_subject1);
-	mark[1].Format(_T("%.2f"), inf.mark_subject2);
-	mark[2].Format(_T("%.2f"), inf.mark_subject3);
+	CString ID, mark[4];
+	ID.Format(_T("%.0f"), inf.studentID);
+	mark[0].Format(_T("%.1f"), inf.mark_subject1);
+	mark[1].Format(_T("%.1f"), inf.mark_subject2);
+	mark[2].Format(_T("%.1f"), inf.mark_subject3);
+	mark[3].Format(_T("%.1f"), inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3);
 
 	m_studentInfList.InsertItem(newline_index, ID);
 	m_studentInfList.SetItemText(newline_index, 1, inf.name);
@@ -156,8 +160,9 @@ void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	m_studentInfList.SetItemText(newline_index, 3, mark[0]);
 	m_studentInfList.SetItemText(newline_index, 4, mark[1]);
 	m_studentInfList.SetItemText(newline_index, 5, mark[2]);
-	m_studentInfList.SetItemText(newline_index, 6, _T("N/A"));
+	m_studentInfList.SetItemText(newline_index, 6, mark[3]);
 	m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
+	m_studentInfList.SetItemText(newline_index, 8, _T("N/A"));
 }
 
 void CStudentRatingSystemDlg::RefreshAverage() {
@@ -245,3 +250,73 @@ int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+
+
+void CStudentRatingSystemDlg::OnBnClickedImport()
+{
+	CFileDialog filedlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT,
+		_T("逗号分隔符文件(*.csv)|*.csv|文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
+	if (filedlg.DoModal() != IDOK) // 取消了
+		return; 
+	int reply = MessageBox(_T("您导入的文件是否存在标题？\n\n标题是指：您的文件第一行不是具体的信息，而是描述列内容的文字。"),
+		_T("是否存在标题"), MB_ICONQUESTION | MB_YESNOCANCEL);
+
+	bool haveHeader;
+	switch (reply)
+	{
+	case IDYES: 
+		haveHeader = true;
+		break;
+	case IDNO:
+		haveHeader = false;
+		break;
+	default:
+		return;
+	}
+
+	CStuFileHandler handler(filedlg.GetPathName());
+	if (handler.err != 0) { // 出错处理
+		CString errmsg;
+		errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"),
+			handler.err, handler.err);
+		MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
+		return; // 立刻析构掉
+	}
+	if (handler.parseFile(haveHeader, &StudentInf_list))
+	{
+		std::list<StudentInf>::iterator StudentsListIterator;
+
+		for (StudentsListIterator = StudentInf_list.begin();
+		StudentsListIterator != StudentInf_list.end();
+			++StudentsListIterator)
+		{
+			AddNewLine(*StudentsListIterator);
+		}
+		
+		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
+	}
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedExport()
+{
+	CFileDialog filedlg(FALSE, NULL, NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST,
+		_T("逗号分隔符文件(*.csv)|*.csv|文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
+	if (filedlg.DoModal() != IDOK) // 取消了
+		return;
+	int reply = MessageBox(_T("您希望保存标题吗？\n\n标题是指：您的文件第一行不是具体的信息，而是描述列内容的文字。"),
+		_T("是否保存标题"), MB_ICONQUESTION | MB_YESNOCANCEL);
+
+	bool haveHeader;
+	switch (reply)
+	{
+	case IDYES:
+		haveHeader = true;
+		break;
+	case IDNO:
+		haveHeader = false;
+		break;
+	default:
+		return;
+	}
+}

@@ -8,6 +8,9 @@
 #include "MyListCtrlExt.h"
 #include "StudentInf.h"
 
+#include <list>
+#include <algorithm>
+
 // CStudentRatingSystemDlg ¶Ô»°¿ò
 class CStudentRatingSystemDlg : public CDialogEx
 {
@@ -55,4 +58,7 @@ private:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 //	afx_msg void OnNMDblclkStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedImport();
+	afx_msg void OnBnClickedExport();
+	std::list<StudentInf> StudentInf_list;
 };
