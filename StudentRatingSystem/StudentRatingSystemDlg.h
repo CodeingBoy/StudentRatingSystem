@@ -42,7 +42,9 @@ protected:
 
 	void RefreshAverage();
 
-	void CalculateAverage();
+	void CalculateAverage(float average[]);
+
+	void CalculateAverage(float * average[4]);
 
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -61,4 +63,5 @@ public:
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedExport();
 	std::list<StudentInf> StudentInf_list;
+	afx_msg void OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 };

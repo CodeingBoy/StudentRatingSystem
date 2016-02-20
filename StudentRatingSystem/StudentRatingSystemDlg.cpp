@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 //	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
 ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
 ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
+ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
 END_MESSAGE_MAP()
 
 
@@ -140,6 +141,10 @@ void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
 	m_studentInfList.DeleteAllItems();
 
 	m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("平均值"));
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 3, _T("N/A"));
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 4, _T("N/A"));
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 5, _T("N/A"));
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount(), 6, _T("N/A"));
 
 	m_studentInfList.InsertItem(m_studentInfList.GetItemCount()-1, _T("          +"));
 }
@@ -163,13 +168,43 @@ void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	m_studentInfList.SetItemText(newline_index, 6, mark[3]);
 	m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
 	m_studentInfList.SetItemText(newline_index, 8, _T("N/A"));
+
+	RefreshAverage();
 }
 
 void CStudentRatingSystemDlg::RefreshAverage() {
-	CalculateAverage();
+	float average[4] = { 0,0,0,0 };
+	CalculateAverage(average);
+
+	CString average_str[4];
+	average_str[0].Format(_T("%.1f"), average[0]);
+	average_str[1].Format(_T("%.1f"), average[1]);
+	average_str[2].Format(_T("%.1f"), average[2]);
+	average_str[3].Format(_T("%.1f"), average[3]);
+
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 3, average_str[0]);
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 4, average_str[1]);
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 5, average_str[2]);
+	m_studentInfList.SetItemText(m_studentInfList.GetItemCount()-1, 6, average_str[3]);
 }
 
-void CStudentRatingSystemDlg::CalculateAverage() {
+void CStudentRatingSystemDlg::CalculateAverage(float average[]) {
+	std::list<StudentInf>::iterator StudentsListIterator;
+
+	for (StudentsListIterator = StudentInf_list.begin();
+	StudentsListIterator != StudentInf_list.end();
+		++StudentsListIterator)
+	{
+		average[0] += StudentsListIterator->mark_subject1;
+		average[1] += StudentsListIterator->mark_subject2;
+		average[2] += StudentsListIterator->mark_subject3;
+	}
+	//average[3] = average[0] + average[1] + average[2];
+
+	int count = m_studentInfList.GetItemCount() - 2;
+	for (int i = 0; i < 3; i++)
+		average[i] /= count;
+	average[3] = average[0] + average[1] + average[2]; // 偷个懒
 
 }
 
@@ -244,8 +279,6 @@ int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | CS_DBLCLKS | LVS_REPORT;
-
-	//BOOL bResult = m_List.Create(dwStyle, CRect(0, 0, 0, 0), this, IDC_LIST);
 	
 	return 0;
 }
@@ -319,4 +352,22 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 	default:
 		return;
 	}
+}
+
+
+void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	if (pNMListView)
+	{
+		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
+
+		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount()-1)
+			RefreshAverage();
+	}
+
+
+	*pResult = 0;
 }
