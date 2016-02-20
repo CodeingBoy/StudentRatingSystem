@@ -71,15 +71,16 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
 	ON_WM_CREATE()
-//	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
-ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
-ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
-ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
-ON_NOTIFY(LVN_DELETEITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist)
-ON_NOTIFY(LVN_INSERTITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnInsertitemStuinflist)
-ON_BN_CLICKED(IDC_evaluateAward1, &CStudentRatingSystemDlg::OnBnClickedevaluateaward1)
-ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
-ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
+	//	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
+	ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
+	ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
+	ON_NOTIFY(LVN_DELETEITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist)
+	ON_NOTIFY(LVN_INSERTITEM, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnInsertitemStuinflist)
+	ON_BN_CLICKED(IDC_evaluateAward1, &CStudentRatingSystemDlg::OnBnClickedevaluateaward1)
+	ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
+	ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
+	ON_CBN_SELCHANGE(IDC_SORT, &CStudentRatingSystemDlg::OnCbnSelchangeSort)
 END_MESSAGE_MAP()
 
 
@@ -116,16 +117,18 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
 
 	PrepareList(); // List 初始化
 
-	// 初始化排序列表
-	m_sortBox.InsertString(0, _T("学号"));
-	m_sortBox.InsertString(1, _T("姓名"));
-	m_sortBox.InsertString(2, _T("班级"));
-	m_sortBox.InsertString(3, _T("英语成绩"));
-	m_sortBox.InsertString(4, _T("数学成绩"));
-	m_sortBox.InsertString(5, _T("C++成绩"));
-	m_sortBox.InsertString(6, _T("总成绩"));
-	m_sortBox.InsertString(7, _T("是否学习标兵"));
-	m_sortBox.InsertString(8, _T("是否三好学生"));
+	// 初始化排序
+	m_studentInfList.SetColumnSorting(0, CListCtrlExt::Auto, CListCtrlExt::StringNumberNoCase);
+	m_studentInfList.SetColumnSorting(1, CListCtrlExt::Auto, CListCtrlExt::StringNoCase);
+	m_studentInfList.SetColumnSorting(2, CListCtrlExt::Auto, CListCtrlExt::StringNoCase);
+	m_studentInfList.SetColumnSorting(3, CListCtrlExt::Auto, CListCtrlExt::Int);
+	m_studentInfList.SetColumnSorting(4, CListCtrlExt::Auto, CListCtrlExt::Int);
+	m_studentInfList.SetColumnSorting(5, CListCtrlExt::Auto, CListCtrlExt::Int);
+	m_studentInfList.SetColumnSorting(6, CListCtrlExt::Auto, CListCtrlExt::Int);
+	m_studentInfList.SetColumnSorting(7, CListCtrlExt::Auto, CListCtrlExt::StringNoCase);
+	m_studentInfList.SetColumnSorting(8, CListCtrlExt::Auto, CListCtrlExt::StringNoCase);
+
+	m_studentInfList.GetHeaderCtrl()->SetRemovable(0, FALSE);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -192,12 +195,12 @@ void CStudentRatingSystemDlg::RefreshAverage() {
 
 	int lastLineIndex = m_studentInfList.GetItemCount() - 1;
 	CString average_str[4];
-	for (int i = 0; i < 4;i++)
+	for (int i = 0; i < 4; i++)
 	{
 		average_str[i].Format(_T("%.1f"), average[i]);
 		m_studentInfList.SetItemText(lastLineIndex, i + 3, average_str[i]);
 	}
-	
+
 }
 
 void CStudentRatingSystemDlg::CalculateAverage(float average[]) {
@@ -275,10 +278,10 @@ void CStudentRatingSystemDlg::OnBnClickedDelete()
 	int deletingIndex = m_studentInfList.GetSelectionMark();
 	if (deletingIndex <= m_studentInfList.GetItemCount() - 3)
 	{
-		
+
 		m_studentInfList.DeleteSelectedItems();
 	}
-	
+
 }
 
 
@@ -286,7 +289,7 @@ int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	return 0;
 }
 
@@ -297,14 +300,14 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 	CFileDialog filedlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT,
 		_T("逗号分隔符文件(*.csv)|*.csv|文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
 	if (filedlg.DoModal() != IDOK) // 取消了
-		return; 
+		return;
 	int reply = MessageBox(_T("您导入的文件是否存在标题？\n\n标题是指：您的文件第一行不是具体的信息，而是描述列内容的文字。"),
 		_T("是否存在标题"), MB_ICONQUESTION | MB_YESNOCANCEL);
 
 	bool haveHeader;
 	switch (reply)
 	{
-	case IDYES: 
+	case IDYES:
 		haveHeader = true;
 		break;
 	case IDNO:
@@ -332,7 +335,7 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 		{
 			AddNewLine(*StudentsListIterator);
 		}
-		
+
 		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
 	}
 }
@@ -360,7 +363,7 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 		return;
 	}
 
-	CStuFileHandler handler(filedlg.GetPathName(),false);
+	CStuFileHandler handler(filedlg.GetPathName(), false);
 	if (handler.err != 0) { // 出错处理
 		CString errmsg;
 		errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"),
@@ -378,13 +381,13 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	
+
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	if (pNMListView)
 	{
 		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
-		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount()-1)
+		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount() - 1)
 			RefreshAverage();
 	}
 
@@ -396,7 +399,7 @@ void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT 
 void CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	
+
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	if (pNMListView)
 	{
@@ -426,9 +429,9 @@ void CStudentRatingSystemDlg::OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *
 void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	
+
 	if (m_studentInfList.GetItemCount() > 2)
-	RefreshAverage();
+		RefreshAverage();
 
 	*pResult = 0;
 }
@@ -439,7 +442,7 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 	evaluateAward1(&StudentInf_list);
 }
 
-void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist){
+void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist) {
 	StudentInf_list.sort(cmp_total); // 先从大到小排序
 
 	for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
@@ -447,12 +450,12 @@ void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist){
 		++StudentsListIterator)
 	{
 		if (StudentsListIterator->mark_subject1 >= 75 &&
-			StudentsListIterator->mark_subject2 >= 75 && 
-			StudentsListIterator->mark_subject3 >= 75  )
+			StudentsListIterator->mark_subject2 >= 75 &&
+			StudentsListIterator->mark_subject3 >= 75)
 		{
-			for (int i = 0; i < m_studentInfList.GetItemCount() - 2;i++)
+			for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
 			{
-				if (_wtof(m_studentInfList.GetItemText(i,0)) == StudentsListIterator->studentID)
+				if (_wtof(m_studentInfList.GetItemText(i, 0)) == StudentsListIterator->studentID)
 				{
 					m_studentInfList.SetItemText(i, 7, _T("是"));
 					m_studentInfList.SetCellColors(i, 7, RGB(134, 71, 63), -1);
@@ -465,7 +468,7 @@ void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist){
 			}
 			return; // 获奖名额只有一人，评定结束
 		}
-		
+
 	}
 }
 
@@ -518,14 +521,6 @@ void CStudentRatingSystemDlg::evaluateAward2(std::list<StudentInf> *plist) {
 
 }
 
-bool cmp_total(StudentInf first, StudentInf second) {
-	if (first.mark_total <= second.mark_total)
-		return false;
-	else
-		return true;
-}
-
-
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 {
 	evaluateAward2(&StudentInf_list);
@@ -535,15 +530,26 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 void CStudentRatingSystemDlg::OnBnClickedDeleteall()
 {
 	if (MessageBox(_T("您确定要清空列表吗？"), _T("确定？"), MB_ICONQUESTION | MB_YESNO)
-	== IDYES) {
+		== IDYES) {
 		InitializeList();
 		StudentInf_list.clear();
 	}
-	
+
 }
 
+bool cmp_total(StudentInf first, StudentInf second) {
+	if (first.mark_total <= second.mark_total)
+		return false;
+	else
+		return true;
+}
 
-void CStudentRatingSystemDlg::OnBnClickedUndo()
+void CStudentRatingSystemDlg::OnCbnSelchangeSort()
 {
-	// TODO: 在此添加控件通知处理程序代码
+	switch (m_sortBox.GetCurSel())
+	{
+
+		break;
+	}
+
 }

@@ -66,6 +66,7 @@ public:
 	afx_msg void OnBnClickedUndo();
 //	CComboBox m_sort;
 	CComboBox m_sortBox;
+	afx_msg void OnCbnSelchangeSort();
 };
 
 bool cmp_total(StudentInf first, StudentInf second);

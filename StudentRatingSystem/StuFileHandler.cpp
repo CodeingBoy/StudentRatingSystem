@@ -5,14 +5,11 @@
 CStuFileHandler::CStuFileHandler(const wchar_t *filename, bool bRead)
 {
 	if (bRead)
-	{
 		if (err = _wfopen_s(&fp, filename, _T("r,ccs=UTF-8")))  // err
 			return;
-	}
-	else {
-		if (err = _wfopen_s(&fp, filename, _T("w,ccs=UTF-8")))  // err
-			return;
-	}
+		else
+			if (err = _wfopen_s(&fp, filename, _T("w,ccs=UTF-8")))  // err
+				return;
 }
 
 
@@ -47,10 +44,10 @@ bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 
 	StudentInf inf;
 	while (!feof(fp)) {
-		if(parseLine(inf))
+		if (parseLine(inf))
 			plist->push_back(inf);
 	}
-	
+
 
 	return true;
 }
@@ -133,7 +130,7 @@ bool CStuFileHandler::composeLine(StudentInf &inf, CString &str)
 	return true;
 }
 
-bool CStuFileHandler::readLine(wchar_t *output) { 
+bool CStuFileHandler::readLine(wchar_t *output) {
 	if (!fp || feof(fp))return false;
 	fgetws(output, 1024, fp);  //∂¡»°“ª––
 	return true;
