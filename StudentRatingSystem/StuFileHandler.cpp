@@ -22,6 +22,21 @@ CStuFileHandler::~CStuFileHandler()
 		fclose(fp);
 }
 
+bool CStuFileHandler::saveFile(bool haveHeader, std::list<StudentInf> *plist) {
+	if (haveHeader)
+		writeLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
+
+	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+	StudentsListIterator != plist->end();
+		++StudentsListIterator)
+	{
+		CString line;
+		composeLine(*StudentsListIterator, line);
+		writeLine(line.GetBuffer());
+	}
+
+	return true;
+}
 
 bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	if (haveHeader)
@@ -96,8 +111,37 @@ bool CStuFileHandler::parseLine(StudentInf &inf)
 	return parseLine(line, inf);
 }
 
+bool CStuFileHandler::composeLine(StudentInf &inf, CString &str)
+{
+	CString award;
+	switch (inf.haveAward)
+	{
+	case 1:
+		award = _T("学习标兵");
+		break;
+	case 2:
+		award = _T("三好学生");
+		break;
+	default:
+		award = _T("未获奖");
+		break;
+	}
+
+	str.Format(_T("%.0f,%s,%s,%.1f,%.1f,%.1f,%.1f,%s"),
+		inf.studentID, inf.name, inf.studentClass, inf.mark_subject1, inf.mark_subject2,
+		inf.mark_subject3, inf.mark_total, award);
+	return true;
+}
+
 bool CStuFileHandler::readLine(wchar_t *output) { 
 	if (!fp || feof(fp))return false;
 	fgetws(output, 1024, fp);  //读取一行
+	return true;
+}
+
+bool CStuFileHandler::writeLine(wchar_t *content) {
+	if (!fp || feof(fp))return false;
+	fputws(content, fp);
+	fputws(_T("\n"), fp);
 	return true;
 }

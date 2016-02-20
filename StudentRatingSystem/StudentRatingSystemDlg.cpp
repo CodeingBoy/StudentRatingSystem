@@ -273,8 +273,6 @@ int CStudentRatingSystemDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
-	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | CS_DBLCLKS | LVS_REPORT;
 	
 	return 0;
 }
@@ -347,6 +345,19 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 		break;
 	default:
 		return;
+	}
+
+	CStuFileHandler handler(filedlg.GetPathName(),false);
+	if (handler.err != 0) { // 出错处理
+		CString errmsg;
+		errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"),
+			handler.err, handler.err);
+		MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
+		return; // 立刻析构掉
+	}
+	if (handler.saveFile(haveHeader, &StudentInf_list))
+	{
+		MessageBox(_T("保存成功！"), _T("成功！"), MB_ICONINFORMATION);
 	}
 }
 
