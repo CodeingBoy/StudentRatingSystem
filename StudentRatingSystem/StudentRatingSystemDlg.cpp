@@ -61,8 +61,6 @@ void CStudentRatingSystemDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STUINFLIST, m_studentInfList);
-	//  DDX_Control(pDX, IDC_SORT, m_sort);
-	DDX_Control(pDX, IDC_SORT, m_sortBox);
 }
 
 BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)

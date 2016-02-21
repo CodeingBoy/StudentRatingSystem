@@ -4,12 +4,13 @@
 
 CStuFileHandler::CStuFileHandler(const wchar_t *filename, bool bRead)
 {
-	if (bRead)
-		if (err = _wfopen_s(&fp, filename, _T("r,ccs=UTF-8")))  // err
+	if (bRead) {
+		if (err = _wfopen_s(&fp, filename, _T("r,ccs=UTF-8")))   // err
 			return;
-		else
-			if (err = _wfopen_s(&fp, filename, _T("w,ccs=UTF-8")))  // err
-				return;
+	}else {
+		if (err = _wfopen_s(&fp, filename, _T("w,ccs=UTF-8")))  // err
+			return;
+	}
 }
 
 
