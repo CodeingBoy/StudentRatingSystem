@@ -8,8 +8,7 @@
 #include "MyListCtrlExt.h"
 #include "StudentInf.h"
 
-#include <list>
-#include <algorithm>
+
 #include "afxwin.h"
 
 // CStudentRatingSystemDlg 对话框
@@ -34,16 +33,11 @@ protected:
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
-	void PrepareList();
-	void InitializeList();
-	void AddNewLine(StudentInf & inf, bool hasAwardInf = false);
-	void RefreshAverage();
-	void CalculateAverage(float average[]);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-	CEdit m_Edit;
+	
 public:
 	CMyListCtrlExt m_studentInfList;
 	afx_msg void OnBnClickedDelete();
@@ -52,26 +46,11 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedExport();
-	std::list<StudentInf> StudentInf_list;
-	afx_msg void OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnDeleteitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedevaluateaward1();
-	void evaluateAward1(std::list<StudentInf>* plist);
-	void evaluateAward2(std::list<StudentInf>* plist);
 	afx_msg void OnBnClickedevaluateaward2();
 	afx_msg void OnBnClickedDeleteall();
-	void syncToLinkList();
-	void syncToList();
-	bool isDataCorrect(std::list<StudentInf>* plist);
-	bool isDataCorrect();
-	bool isDataCorrect(int row, int column, bool mark);
-	bool isDataCorrect(int row, int column);
-	void markIncorrectCell();
-	void markIncorrectCell(int row, int column);
-	void OnBnClickedCheck();
-private:
-	bool calcAverage = true;
+	afx_msg void OnBnClickedCheck();
+	afx_msg void OnBnClickedOk();
 };
 
-bool cmp_total(StudentInf first, StudentInf second);
+

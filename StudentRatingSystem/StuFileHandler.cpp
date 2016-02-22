@@ -36,6 +36,19 @@ bool CStuFileHandler::saveFile(bool haveHeader, std::list<StudentInf> *plist) {
 	return true;
 }
 
+bool CStuFileHandler::saveFile(bool haveHeader, CMyListCtrlExt *plist) {
+	if (haveHeader)
+		writeLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
+
+	for (int i = 0; i < plist->GetItemCount() - 2; i++) {
+		CString line;
+		composeLine(plist->getData(i) , line);
+		writeLine(line.GetBuffer());
+	}
+
+	return true;
+}
+
 bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	if (haveHeader)
 	{
@@ -52,8 +65,11 @@ bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	return true;
 }
 
-bool CStuFileHandler::parseFile(bool haveHeader, CStudentRatingSystemDlg *dlg, 
-	void (CStudentRatingSystemDlg::* ptrAddFunc)(StudentInf&, bool)) {
+bool CStuFileHandler::parseFile(bool haveHeader, CMyListCtrlExt *plist,
+	void (CMyListCtrlExt::* ptrAddFunc)(StudentInf&, bool)) {
+
+	plist->calcAverage = false;
+
 	if (haveHeader)
 	{
 		wchar_t temp[1024];
@@ -63,8 +79,12 @@ bool CStuFileHandler::parseFile(bool haveHeader, CStudentRatingSystemDlg *dlg,
 	StudentInf inf;
 	while (!feof(fp)) {
 		if (parseLine(inf))
-			(dlg->*ptrAddFunc)(inf, false);
+			(plist->*ptrAddFunc)(inf, false);
 	}
+
+	plist->RefreshAverage();
+
+	plist->calcAverage = true;
 
 	return true;
 }
@@ -135,7 +155,7 @@ bool CStuFileHandler::parseLine(StudentInf &inf)
 bool CStuFileHandler::composeLine(StudentInf &inf, CString &str)
 {
 	CString award;
-	switch (inf.haveAward)
+	switch (inf.hasAward)
 	{
 	case 1:
 		award = _T("学习标兵");
@@ -160,7 +180,7 @@ bool CStuFileHandler::saveAwardList(std::list<StudentInf> *plist) {
 	StudentsListIterator != plist->end();
 		++StudentsListIterator)
 	{
-		if (StudentsListIterator->haveAward == 1)
+		if (StudentsListIterator->hasAward == 1)
 		{
 			writeLine(StudentsListIterator->name);
 		}
@@ -172,7 +192,7 @@ bool CStuFileHandler::saveAwardList(std::list<StudentInf> *plist) {
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
 	StudentsListIterator != plist->end();
 		++StudentsListIterator) {
-		if (StudentsListIterator->haveAward == 2) {
+		if (StudentsListIterator->hasAward == 2) {
 			writeLine(StudentsListIterator->name);
 		}
 

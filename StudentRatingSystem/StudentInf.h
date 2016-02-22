@@ -8,5 +8,5 @@ typedef struct StudentInf{
 	float mark_subject2;		// 科目2成绩
 	float mark_subject3;		// 科目3成绩
 	float mark_total;			// 总成绩
-	byte haveAward = 0;
+	byte hasAward = 0;
 } studentInf;

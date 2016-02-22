@@ -13,9 +13,9 @@ public:
 	CStuFileHandler(const wchar_t * filename, bool bRead = true);
 	~CStuFileHandler();
 	bool saveFile(bool haveHeader, std::list<StudentInf>* plist);
+	bool saveFile(bool haveHeader, CMyListCtrlExt * plist);
 	bool parseFile(bool haveHeader, std::list<StudentInf>* plist);
-	bool parseFile(bool haveHeader, CStudentRatingSystemDlg * dlg, void(CStudentRatingSystemDlg::* ptrAddFunc)(StudentInf &, bool));
-	bool parseFile(bool haveHeader, CStudentRatingSystemDlg * dlg, void(CStudentRatingSystemDlg::* ptrAddFunc)(StudentInf &));
+	bool parseFile(bool haveHeader, CMyListCtrlExt * dlg, void(CMyListCtrlExt::* ptrAddFunc)(StudentInf &, bool));
 	bool parseLine(wchar_t * line, StudentInf & inf);
 	bool parseLine(StudentInf & inf);
 	bool composeLine(StudentInf & inf, CString & str);
