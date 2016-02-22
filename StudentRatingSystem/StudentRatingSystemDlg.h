@@ -68,6 +68,8 @@ public:
 	CComboBox m_sortBox;
 	afx_msg void OnCbnSelchangeSort();
 	afx_msg void OnBnClickedExportAward();
+	bool isDataCorrect(std::list<StudentInf>* plist);
+	afx_msg void OnBnClickedCheck();
 };
 
 bool cmp_total(StudentInf first, StudentInf second);

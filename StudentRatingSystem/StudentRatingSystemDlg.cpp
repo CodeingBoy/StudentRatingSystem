@@ -78,6 +78,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
 	ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
 	ON_BN_CLICKED(IDC_EXPORT_AWARD, &CStudentRatingSystemDlg::OnBnClickedExportAward)
+	ON_BN_CLICKED(IDC_CHECK, &CStudentRatingSystemDlg::OnBnClickedCheck)
 END_MESSAGE_MAP()
 
 
@@ -176,10 +177,18 @@ void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	m_studentInfList.InsertItem(newline_index, ID);
 	m_studentInfList.SetItemText(newline_index, 1, inf.name);
 	m_studentInfList.SetItemText(newline_index, 2, inf.studentClass);
-	m_studentInfList.SetItemText(newline_index, 3, mark[0]);
-	m_studentInfList.SetItemText(newline_index, 4, mark[1]);
-	m_studentInfList.SetItemText(newline_index, 5, mark[2]);
-	m_studentInfList.SetItemText(newline_index, 6, mark[3]);
+	for (int i = 0; i < 4;i++)
+	{
+		if (mark[i] == _T("-1.0"))
+		{
+			m_studentInfList.SetItemText(newline_index, i + 3, _T("错误"));
+			m_studentInfList.SetCellColors(newline_index, i + 3, RGB(255, 0, 0), -1);
+		}
+		else {
+			m_studentInfList.SetItemText(newline_index, i + 3, mark[i]);
+		}
+		
+	}
 	m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
 	m_studentInfList.SetItemText(newline_index, 8, _T("N/A"));
 
@@ -325,10 +334,6 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 
 	if (handler.parseFile(haveHeader, &StudentInf_list))
 	{
-		if (handler.hasExtraInf){
-			MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
-				 "建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
-		}
 		std::list<StudentInf>::iterator StudentsListIterator;
 
 		for (StudentsListIterator = StudentInf_list.begin();
@@ -336,6 +341,15 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 			++StudentsListIterator)
 		{
 			AddNewLine(*StudentsListIterator);
+		}
+
+		if (handler.hasDataError) {
+			MessageBox(_T("程序发现您的文件中缺少了一部分信息，这些信息可能使得程序统计功能无法正常运行，因此已作标红处理。\n"
+				"建议您审阅数据以保证数据的正确性。"), _T("文件缺少信息"), MB_ICONERROR);
+		}
+		if (handler.hasExtraInf) {
+			MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
+				"建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
 		}
 
 		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
@@ -565,5 +579,35 @@ void CStudentRatingSystemDlg::OnBnClickedExportAward()
 	if (handler.saveAwardList(&StudentInf_list))
 	{
 		MessageBox(_T("保存成功！"), _T("成功！"), MB_ICONINFORMATION);
+	}
+}
+
+bool CStudentRatingSystemDlg::isDataCorrect(std::list<StudentInf> *plist) {
+	for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
+	StudentsListIterator != StudentInf_list.end();
+		++StudentsListIterator)
+	{
+		if (StudentsListIterator->mark_subject1 < 0 ||
+			StudentsListIterator->mark_subject2 < 0 ||
+			StudentsListIterator->mark_subject3 < 0)
+		{
+			return false;
+		}
+
+		if (StudentsListIterator->mark_total < 0)
+			StudentsListIterator->mark_total = StudentsListIterator->mark_subject1 +
+			StudentsListIterator->mark_subject2 + StudentsListIterator->mark_subject3;
+	}
+
+	return true;
+}
+
+void CStudentRatingSystemDlg::OnBnClickedCheck()
+{
+	if (isDataCorrect(&StudentInf_list))
+	{
+		MessageBox(_T("恭喜，您的数据完整。"), _T("数据完整"), MB_ICONINFORMATION);
+	}else {
+		MessageBox(_T("您的数据不完整。"), _T("数据不完整"), MB_ICONERROR);
 	}
 }

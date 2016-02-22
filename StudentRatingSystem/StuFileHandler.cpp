@@ -59,10 +59,11 @@ bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 	wchar_t *pStr, *pContext;
 	int times = 0;
 	pStr = wcstok_s(line, _T(","), &pContext);
-	times++;
 
+	bool hasLineError = false;
 	while (pStr)
 	{
+		times++;
 		switch (times)
 		{
 		case 1:
@@ -83,15 +84,24 @@ bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 		case 6:
 			inf.mark_subject3 = _wtof(pStr);
 
-			inf.mark_total = inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3;
+			if (!hasLineError)
+				inf.mark_total = inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3;
 			break;
 		default:
 			hasExtraInf = true;
 			break;
 		}
 		pStr = wcstok_s(pContext, _T(","), &pContext);
-		times++;
+		
+
+		if (times < 6 && (pStr == NULL || !wcscmp(pStr,_T("\n")))) {
+			hasDataError = true;
+			hasLineError = true;
+			inf.mark_total = -1;
+			pStr = _T("-1");
+		}
 	}
+	
 
 	return true;
 }

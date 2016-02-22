@@ -22,6 +22,7 @@ public:
 	bool writeLine(wchar_t * content);
 	int err;
 	bool hasExtraInf = false;
+	bool hasDataError = false;
 private:
 	bool bRead = true; // 读取还是保存
 	FILE *fp;
