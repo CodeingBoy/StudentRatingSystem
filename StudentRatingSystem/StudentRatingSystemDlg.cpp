@@ -388,7 +388,7 @@ void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT 
 	{
 		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
-		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount() - 1)
+		if (m_studentInfList.GetItemCount() > 2 && nItem != m_studentInfList.GetItemCount() - 1)
 			RefreshAverage();
 	}
 
