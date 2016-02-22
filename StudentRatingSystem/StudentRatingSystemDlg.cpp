@@ -614,13 +614,42 @@ bool CStudentRatingSystemDlg::isDataCorrect(std::list<StudentInf> *plist) {
 }
 
 bool CStudentRatingSystemDlg::isDataCorrect() {
+	bool isCorrect = true;
 	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++) {
+		for (int j = 3; j <= 6;j++)
+		{
+			isCorrect = isDataCorrect(i, j, false);
+		}
+	}
+
+	return isCorrect;
+}
+
+bool CStudentRatingSystemDlg::isDataCorrect(int row, int column, bool mark) {
+	if (!isDataCorrect(row,column))
+	{
+		if (mark)
+			markIncorrectCell(row, column);
+		return false;
+	}
+
+	return true;
+}
+
+bool CStudentRatingSystemDlg::isDataCorrect(int row, int column) {
+	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++) {
+		if (m_studentInfList.GetItemText(i, 3) == _T("") ||
+			m_studentInfList.GetItemText(i, 4) == _T("") ||
+			m_studentInfList.GetItemText(i, 5) == _T(""))
+			return false;
+
 		if (m_studentInfList.GetItemText(i, 3) == _T("´íÎó") ||
 			m_studentInfList.GetItemText(i, 4) == _T("´íÎó") ||
 			m_studentInfList.GetItemText(i, 5) == _T("´íÎó"))
 			return false;
 
-		if (m_studentInfList.GetItemText(i, 6) == _T("´íÎó")) {
+		if (m_studentInfList.GetItemText(i, 6) == _T("") || 
+			m_studentInfList.GetItemText(i, 6) == _T("´íÎó")) {
 			CString str;
 			str.Format(_T("%.1f"), _wtof(m_studentInfList.GetItemText(i, 3)) +
 				_wtof(m_studentInfList.GetItemText(i, 4)) + _wtof(m_studentInfList.GetItemText(i, 5)));
@@ -629,6 +658,11 @@ bool CStudentRatingSystemDlg::isDataCorrect() {
 	}
 
 	return true;
+}
+
+void CStudentRatingSystemDlg::markIncorrectCell(int row, int column) {
+	m_studentInfList.SetItemText(row, column, _T("´íÎó"));
+	m_studentInfList.SetCellColors(row, column, RGB(255, 0, 0), -1);
 }
 
 

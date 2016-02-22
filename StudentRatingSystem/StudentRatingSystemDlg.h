@@ -65,6 +65,10 @@ public:
 	void syncToList();
 	bool isDataCorrect(std::list<StudentInf>* plist);
 	bool isDataCorrect();
+	bool isDataCorrect(int row, int column, bool mark);
+	bool isDataCorrect(int row, int column);
+	void markIncorrectCell();
+	void markIncorrectCell(int row, int column);
 	void OnBnClickedCheck();
 private:
 	bool calcAverage = true;
