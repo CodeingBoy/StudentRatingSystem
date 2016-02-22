@@ -2,7 +2,6 @@
 #include "StuFileHandler.h"
 #include <string.h>
 
-
 CStuFileHandler::CStuFileHandler(const wchar_t *filename, bool bRead)
 {
 	if (bRead) {

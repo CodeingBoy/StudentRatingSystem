@@ -63,6 +63,8 @@ public:
 	afx_msg void OnBnClickedDeleteall();
 	void syncToLinkList();
 	void syncToList();
+	bool isDataCorrect(std::list<StudentInf>* plist);
+	void OnBnClickedCheck();
 private:
 	bool calcAverage = true;
 };
