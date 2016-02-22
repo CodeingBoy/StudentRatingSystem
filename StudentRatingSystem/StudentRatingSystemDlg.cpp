@@ -32,6 +32,8 @@ protected:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+//	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -44,6 +46,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 
@@ -158,11 +161,12 @@ void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
 	int averageIndex = m_studentInfList.InsertItem(m_studentInfList.GetItemCount(), _T("平均值"));
 	for (int i = 0; i < 4; i++)
 		m_studentInfList.SetItemText(averageIndex, i + 3, _T("N/A"));
+	m_studentInfList.SetRowColors(averageIndex, RGB(28, 28, 28), -1);
 
 	m_studentInfList.InsertItem(m_studentInfList.GetItemCount() - 1, _T("          +"));
 }
 
-void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
+void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf, bool hasAwardInf) {
 	int newline_index = m_studentInfList.GetItemCount() - 2; // 最后一行显示平均值，倒数第二行为预留
 
 	CString ID, mark[4];
@@ -179,13 +183,32 @@ void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf) {
 	m_studentInfList.SetItemText(newline_index, 4, mark[1]);
 	m_studentInfList.SetItemText(newline_index, 5, mark[2]);
 	m_studentInfList.SetItemText(newline_index, 6, mark[3]);
-	m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
-	m_studentInfList.SetItemText(newline_index, 8, _T("N/A"));
 
-	RefreshAverage();
+	if (hasAwardInf){
+		m_studentInfList.SetItemText(newline_index, 7, _T("否"));
+		m_studentInfList.SetItemText(newline_index, 8, _T("否"));
+		m_studentInfList.SetCellColors(newline_index, 7, RGB(100, 106, 88), -1);
+		m_studentInfList.SetCellColors(newline_index, 8, RGB(100, 106, 88), -1);
+		switch (inf.haveAward)
+		{
+		case 1:
+			m_studentInfList.SetItemText(newline_index, 7, _T("是"));
+			m_studentInfList.SetCellColors(newline_index, 7, RGB(134, 71, 63), -1);
+			break;
+		case 2:
+			m_studentInfList.SetItemText(newline_index, 8, _T("是"));
+			m_studentInfList.SetCellColors(newline_index, 8, RGB(134, 71, 63), -1);
+			break;
+		}
+	}else {
+		m_studentInfList.SetItemText(newline_index, 7, _T("N/A"));
+		m_studentInfList.SetItemText(newline_index, 8, _T("N/A"));
+	}
+
 }
 
 void CStudentRatingSystemDlg::RefreshAverage() {
+
 	float average[4] = { 0,0,0,0 };
 	CalculateAverage(average);
 
@@ -200,18 +223,14 @@ void CStudentRatingSystemDlg::RefreshAverage() {
 }
 
 void CStudentRatingSystemDlg::CalculateAverage(float average[]) {
-	std::list<StudentInf>::iterator StudentsListIterator;
 
-	for (StudentsListIterator = StudentInf_list.begin();
-	StudentsListIterator != StudentInf_list.end();
-		++StudentsListIterator)
+	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
 	{
 		// 累加起来
-		average[0] += StudentsListIterator->mark_subject1;
-		average[1] += StudentsListIterator->mark_subject2;
-		average[2] += StudentsListIterator->mark_subject3;
+		average[0] += _wtof(m_studentInfList.GetItemText(i, 3));
+		average[1] += _wtof(m_studentInfList.GetItemText(i, 4));
+		average[2] += _wtof(m_studentInfList.GetItemText(i, 5));
 	}
-	//average[3] = average[0] + average[1] + average[2];
 
 	int studentNumber = m_studentInfList.GetItemCount() - 2;
 	for (int i = 0; i < 3; i++)
@@ -322,23 +341,22 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 		return; // 立刻析构掉
 	}
 
-	if (handler.parseFile(haveHeader, &StudentInf_list))
+	calcAverage = false; // 即将大批量导入 取消每次修改都计算平均
+
+	void (CStudentRatingSystemDlg::* pFunc)(StudentInf&, bool) = &CStudentRatingSystemDlg::AddNewLine;
+	if (handler.parseFile(haveHeader, this, pFunc))
 	{
 		if (handler.hasExtraInf){
 			MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
 				 "建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
 		}
-		std::list<StudentInf>::iterator StudentsListIterator;
 
-		for (StudentsListIterator = StudentInf_list.begin();
-		StudentsListIterator != StudentInf_list.end();
-			++StudentsListIterator)
-		{
-			AddNewLine(*StudentsListIterator);
-		}
+		RefreshAverage();
 
 		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
 	}
+
+	calcAverage = true;
 }
 
 
@@ -388,7 +406,8 @@ void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT 
 	{
 		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
-		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount() - 1)
+		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount() - 1 &&
+			calcAverage )
 			RefreshAverage();
 	}
 
@@ -431,7 +450,7 @@ void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
-	if (m_studentInfList.GetItemCount() > 2)
+	if (m_studentInfList.GetItemCount() > 2 && calcAverage)
 		RefreshAverage();
 
 	*pResult = 0;
@@ -440,7 +459,9 @@ void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 {
+	syncToLinkList();
 	evaluateAward1(&StudentInf_list);
+	syncToList();
 }
 
 void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist) {
@@ -454,19 +475,7 @@ void CStudentRatingSystemDlg::evaluateAward1(std::list<StudentInf> *plist) {
 			StudentsListIterator->mark_subject2 >= 75 &&
 			StudentsListIterator->mark_subject3 >= 75)
 		{
-			for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
-			{
-				if (_wtof(m_studentInfList.GetItemText(i, 0)) == StudentsListIterator->studentID)
-				{
-					m_studentInfList.SetItemText(i, 7, _T("是"));
-					m_studentInfList.SetCellColors(i, 7, RGB(134, 71, 63), -1);
-					StudentsListIterator->haveAward = 1;
-				}
-				else {
-					m_studentInfList.SetItemText(i, 7, _T("否"));
-					m_studentInfList.SetCellColors(i, 7, RGB(100, 106, 88), -1);
-				}
-			}
+			StudentsListIterator->haveAward = 1;
 			return; // 获奖名额只有一人，评定结束
 		}
 
@@ -489,42 +498,18 @@ void CStudentRatingSystemDlg::evaluateAward2(std::list<StudentInf> *plist) {
 			if (StudentsListIterator->mark_subject1 >= 75 &&
 				StudentsListIterator->mark_subject2 >= 75 &&
 				StudentsListIterator->mark_subject3 >= 75)
-			{
-				// 查找并填写
-				for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
-				{
-					if (_wtof(m_studentInfList.GetItemText(i, 0)) == StudentsListIterator->studentID)
-					{
-						m_studentInfList.SetItemText(i, 8, _T("是"));
-						m_studentInfList.SetCellColors(i, 8, RGB(134, 71, 63), -1);
-						StudentsListIterator->haveAward = 2;
-						break; // 已查找到，结束循环
-					}
-				}
-			}
+					StudentsListIterator->haveAward = 2;
 			num++;
 		}
 
 	}
-
-	// 没获奖的填写否
-	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
-	{
-		if (m_studentInfList.GetItemText(i, 8) != _T("是"))
-		{
-			m_studentInfList.SetItemText(i, 8, _T("否"));
-			m_studentInfList.SetCellColors(i, 8, RGB(100, 106, 88), -1);
-		}
-		// 这残酷的社会，连个安慰奖都没有 :(
-		// 这坑爹的支付宝，没敬业福就没有奖金 :(
-	}
-
-
 }
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 {
+	syncToLinkList();
 	evaluateAward2(&StudentInf_list);
+	syncToList();
 }
 
 
@@ -538,9 +523,48 @@ void CStudentRatingSystemDlg::OnBnClickedDeleteall()
 
 }
 
+void CStudentRatingSystemDlg::syncToLinkList() {
+		StudentInf_list.clear();
+		for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++)
+		{
+			StudentInf inf;
+
+			inf.studentID = _wtof(m_studentInfList.GetItemText(i,0));
+			wcscpy_s(inf.name, m_studentInfList.GetItemText(i, 1));
+			wcscpy_s(inf.studentClass, m_studentInfList.GetItemText(i, 2));
+			inf.mark_subject1 = _wtof(m_studentInfList.GetItemText(i, 3));
+			inf.mark_subject2 = _wtof(m_studentInfList.GetItemText(i, 4));
+			inf.mark_subject3 = _wtof(m_studentInfList.GetItemText(i, 5));
+			inf.mark_total = _wtof(m_studentInfList.GetItemText(i, 6));
+			inf.haveAward = 0;
+			if (m_studentInfList.GetItemText(i, 7) == _T("是"))
+				inf.haveAward = 1;
+			else if (m_studentInfList.GetItemText(i, 8) == _T("是"))
+				inf.haveAward = 2;
+
+			StudentInf_list.push_back(inf);
+		}
+}
+
+void CStudentRatingSystemDlg::syncToList() {
+	InitializeList();
+
+	calcAverage = false;
+
+	for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
+	StudentsListIterator != StudentInf_list.end();
+		++StudentsListIterator)
+	{
+		AddNewLine(*StudentsListIterator, true);
+	}
+
+	calcAverage = true;
+}
+
 bool cmp_total(StudentInf first, StudentInf second) {
 	if (first.mark_total <= second.mark_total)
 		return false;
 	else
 		return true;
 }
+

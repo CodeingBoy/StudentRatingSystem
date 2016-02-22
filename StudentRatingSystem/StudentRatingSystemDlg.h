@@ -36,7 +36,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	void PrepareList();
 	void InitializeList();
-	void AddNewLine(StudentInf & inf);
+	void AddNewLine(StudentInf & inf, bool hasAwardInf = false);
 	void RefreshAverage();
 	void CalculateAverage(float average[]);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -47,8 +47,7 @@ protected:
 public:
 	CMyListCtrlExt m_studentInfList;
 	afx_msg void OnBnClickedDelete();
-private:
-	
+
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnBnClickedImport();
@@ -62,11 +61,10 @@ public:
 	void evaluateAward2(std::list<StudentInf>* plist);
 	afx_msg void OnBnClickedevaluateaward2();
 	afx_msg void OnBnClickedDeleteall();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnBnClickedUndo();
-//	CComboBox m_sort;
-	CComboBox m_sortBox;
-	afx_msg void OnCbnSelchangeSort();
+	void syncToLinkList();
+	void syncToList();
+private:
+	bool calcAverage = true;
 };
 
 bool cmp_total(StudentInf first, StudentInf second);

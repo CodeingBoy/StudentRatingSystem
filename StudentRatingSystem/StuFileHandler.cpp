@@ -53,6 +53,23 @@ bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	return true;
 }
 
+bool CStuFileHandler::parseFile(bool haveHeader, CStudentRatingSystemDlg *dlg, 
+	void (CStudentRatingSystemDlg::* ptrAddFunc)(StudentInf&, bool)) {
+	if (haveHeader)
+	{
+		wchar_t temp[1024];
+		readLine(temp); // 丢弃第一行
+	}
+
+	StudentInf inf;
+	while (!feof(fp)) {
+		if (parseLine(inf))
+			(dlg->*ptrAddFunc)(inf, false);
+	}
+
+	return true;
+}
+
 bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 {
 	// 分割字符串
