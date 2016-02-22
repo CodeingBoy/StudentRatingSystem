@@ -19,10 +19,12 @@ public:
 	bool parseLine(wchar_t * line, StudentInf & inf);
 	bool parseLine(StudentInf & inf);
 	bool composeLine(StudentInf & inf, CString & str);
+	bool saveAwardList(std::list<StudentInf> *plist);
 	bool readLine(wchar_t * output);
 	bool writeLine(wchar_t * content);
 	int err;
 	bool hasExtraInf = false;
+	bool hasDataError = false;
 private:
 	bool bRead = true; // 读取还是保存
 	FILE *fp;
