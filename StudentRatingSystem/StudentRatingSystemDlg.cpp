@@ -69,7 +69,6 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_DELETE, &CStudentRatingSystemDlg::OnBnClickedDelete)
 	ON_WM_CREATE()
-	//	ON_NOTIFY(NM_DBLCLK, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnNMDblclkStuinflist)
 	ON_BN_CLICKED(IDC_IMPORT, &CStudentRatingSystemDlg::OnBnClickedImport)
 	ON_BN_CLICKED(IDC_EXPORT, &CStudentRatingSystemDlg::OnBnClickedExport)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STUINFLIST, &CStudentRatingSystemDlg::OnLvnItemchangedStuinflist)
@@ -78,7 +77,6 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_evaluateAward1, &CStudentRatingSystemDlg::OnBnClickedevaluateaward1)
 	ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
 	ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
-	ON_CBN_SELCHANGE(IDC_SORT, &CStudentRatingSystemDlg::OnCbnSelchangeSort)
 END_MESSAGE_MAP()
 
 
@@ -323,8 +321,13 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 		MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
 		return; // 立刻析构掉
 	}
+
 	if (handler.parseFile(haveHeader, &StudentInf_list))
 	{
+		if (handler.hasExtraInf){
+			MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
+				 "建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
+		}
 		std::list<StudentInf>::iterator StudentsListIterator;
 
 		for (StudentsListIterator = StudentInf_list.begin();
@@ -540,14 +543,4 @@ bool cmp_total(StudentInf first, StudentInf second) {
 		return false;
 	else
 		return true;
-}
-
-void CStudentRatingSystemDlg::OnCbnSelchangeSort()
-{
-	switch (m_sortBox.GetCurSel())
-	{
-
-		break;
-	}
-
 }

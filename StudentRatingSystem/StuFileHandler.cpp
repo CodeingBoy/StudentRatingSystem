@@ -2,6 +2,7 @@
 #include "StuFileHandler.h"
 #include <string.h>
 
+
 CStuFileHandler::CStuFileHandler(const wchar_t *filename, bool bRead)
 {
 	if (bRead) {
@@ -49,14 +50,11 @@ bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 			plist->push_back(inf);
 	}
 
-
 	return true;
 }
 
 bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 {
-	TRACE(line);
-
 	// ·Ö¸î×Ö·û´®
 	wchar_t *pStr, *pContext;
 	int times = 0;
@@ -88,8 +86,7 @@ bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 			inf.mark_total = inf.mark_subject1 + inf.mark_subject2 + inf.mark_subject3;
 			break;
 		default:
-			TRACE(_T("???"));
-			ASSERT(TRUE);
+			hasExtraInf = true;
 			break;
 		}
 		pStr = wcstok_s(pContext, _T(","), &pContext);
