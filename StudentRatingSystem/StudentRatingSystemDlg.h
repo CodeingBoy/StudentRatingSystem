@@ -67,6 +67,7 @@ public:
 //	CComboBox m_sort;
 	CComboBox m_sortBox;
 	afx_msg void OnCbnSelchangeSort();
+	afx_msg void OnBnClickedExportAward();
 };
 
 bool cmp_total(StudentInf first, StudentInf second);
