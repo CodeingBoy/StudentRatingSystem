@@ -162,8 +162,11 @@ void CStudentRatingSystemDlg::InitializeList() { // 初始化列表（可执行多次）
 	for (int i = 0; i < 4; i++)
 		m_studentInfList.SetItemText(averageIndex, i + 3, _T("N/A"));
 	m_studentInfList.SetRowColors(averageIndex, RGB(28, 28, 28), -1);
+	m_studentInfList.SetRowReadOnly(averageIndex);
 
 	m_studentInfList.InsertItem(m_studentInfList.GetItemCount() - 1, _T("          +"));
+	m_studentInfList.SetRowReadOnly(m_studentInfList.GetItemCount() - 1);
+
 }
 
 void CStudentRatingSystemDlg::AddNewLine(StudentInf &inf, bool hasAwardInf) {
@@ -406,7 +409,7 @@ void CStudentRatingSystemDlg::OnLvnItemchangedStuinflist(NMHDR *pNMHDR, LRESULT 
 	{
 		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
-		if (m_studentInfList.GetItemCount() > 2 && nItem == m_studentInfList.GetItemCount() - 1 &&
+		if (m_studentInfList.GetItemCount() > 2 && nItem != m_studentInfList.GetItemCount() - 1 &&
 			calcAverage )
 			RefreshAverage();
 	}
