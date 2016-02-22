@@ -64,6 +64,7 @@ public:
 	void syncToLinkList();
 	void syncToList();
 	bool isDataCorrect(std::list<StudentInf>* plist);
+	bool isDataCorrect();
 	void OnBnClickedCheck();
 private:
 	bool calcAverage = true;

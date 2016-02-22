@@ -474,6 +474,11 @@ void CStudentRatingSystemDlg::OnLvnInsertitemStuinflist(NMHDR *pNMHDR, LRESULT *
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 {
+	if (!isDataCorrect())
+	{
+		MessageBox(_T("您的数据不完整，无法进行评定。"), _T("数据不完整"), MB_ICONERROR);
+		return;
+	}
 	syncToLinkList();
 	evaluateAward1(&StudentInf_list);
 	syncToList();
@@ -522,6 +527,11 @@ void CStudentRatingSystemDlg::evaluateAward2(std::list<StudentInf> *plist) {
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 {
+	if (!isDataCorrect())
+	{
+		MessageBox(_T("您的数据不完整，无法进行评定。"), _T("数据不完整"), MB_ICONERROR);
+		return;
+	}
 	syncToLinkList();
 	evaluateAward2(&StudentInf_list);
 	syncToList();
@@ -603,9 +613,28 @@ bool CStudentRatingSystemDlg::isDataCorrect(std::list<StudentInf> *plist) {
 	return true;
 }
 
+bool CStudentRatingSystemDlg::isDataCorrect() {
+	for (int i = 0; i < m_studentInfList.GetItemCount() - 2; i++) {
+		if (m_studentInfList.GetItemText(i, 3) == _T("错误") ||
+			m_studentInfList.GetItemText(i, 4) == _T("错误") ||
+			m_studentInfList.GetItemText(i, 5) == _T("错误"))
+			return false;
+
+		if (m_studentInfList.GetItemText(i, 6) == _T("错误")) {
+			CString str;
+			str.Format(_T("%.1f"), _wtof(m_studentInfList.GetItemText(i, 3)) +
+				_wtof(m_studentInfList.GetItemText(i, 4)) + _wtof(m_studentInfList.GetItemText(i, 5)));
+			m_studentInfList.SetItemText(i, 6, str);
+		}
+	}
+
+	return true;
+}
+
+
 void CStudentRatingSystemDlg::OnBnClickedCheck()
 {
-	if (isDataCorrect(&StudentInf_list))
+	if (isDataCorrect())
 	{
 		MessageBox(_T("恭喜，您的数据完整。"), _T("数据完整"), MB_ICONINFORMATION);
 	}
