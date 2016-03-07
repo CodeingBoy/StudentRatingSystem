@@ -42,7 +42,7 @@ bool CStuFileHandler::saveFile(bool haveHeader, CMyListCtrlExt *plist) {
 
 	for (int i = 0; i < plist->GetItemCount() - 2; i++) {
 		CString line;
-		composeLine(plist->getData(i) , line);
+		composeLine(plist->GetData(i) , line);
 		writeLine(line.GetBuffer());
 	}
 
@@ -50,8 +50,7 @@ bool CStuFileHandler::saveFile(bool haveHeader, CMyListCtrlExt *plist) {
 }
 
 bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
-	if (haveHeader)
-	{
+	if (haveHeader) {
 		wchar_t temp[1024];
 		readLine(temp); // 丢弃第一行
 	}
@@ -65,13 +64,8 @@ bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	return true;
 }
 
-bool CStuFileHandler::parseFile(bool haveHeader, CMyListCtrlExt *plist,
-	void (CMyListCtrlExt::* ptrAddFunc)(StudentInf&, bool)) {
-
-	plist->calcAverage = false;
-
-	if (haveHeader)
-	{
+bool CStuFileHandler::parseFile(bool haveHeader, CMyListCtrlExt *plist) {
+	if (haveHeader)	{
 		wchar_t temp[1024];
 		readLine(temp); // 丢弃第一行
 	}
@@ -79,12 +73,10 @@ bool CStuFileHandler::parseFile(bool haveHeader, CMyListCtrlExt *plist,
 	StudentInf inf;
 	while (!feof(fp)) {
 		if (parseLine(inf))
-			(plist->*ptrAddFunc)(inf, false);
+			plist->AddNewLine(inf);
 	}
 
 	plist->RefreshAverage();
-
-	plist->calcAverage = true;
 
 	return true;
 }

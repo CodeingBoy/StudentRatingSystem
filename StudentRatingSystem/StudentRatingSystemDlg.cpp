@@ -78,7 +78,6 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
 	ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
 	ON_BN_CLICKED(IDC_CHECK, &CStudentRatingSystemDlg::OnBnClickedCheck)
-	ON_BN_CLICKED(IDOK, &CStudentRatingSystemDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -220,10 +219,7 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 		return; // 立刻析构掉
 	}
 
-	m_studentInfList.calcAverage = false; // 即将大批量导入 取消每次修改都计算平均
-
-	void (CMyListCtrlExt::* pFunc)(StudentInf&, bool) = &CMyListCtrlExt::AddNewLine;
-	if (handler.parseFile(haveHeader, &m_studentInfList, pFunc))
+	if (handler.parseFile(haveHeader, &m_studentInfList))
 	{
 		if (handler.hasDataError) {
 			MessageBox(_T("程序发现您的文件中缺少了一部分信息，这些信息可能使得程序统计功能无法正常运行，因此已作标红处理。\n"
@@ -239,7 +235,7 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
 	}
 
-	m_studentInfList.calcAverage = true;
+	m_studentInfList.RefreshAverage();
 }
 
 
@@ -281,16 +277,15 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 {
-	if (!m_studentInfList.isDataCorrect())
-	{
+	if (!m_studentInfList.isDataCorrect())	{
 		MessageBox(_T("您的数据不完整，无法进行评定。"), _T("数据不完整"), MB_ICONERROR);
 		return;
 	}
 
 	std::list<StudentInf> StudentInf_list;
-	m_studentInfList.syncToLinkList(&StudentInf_list);
-	m_studentInfList.evaluateAward1(&StudentInf_list);
-	m_studentInfList.syncToList(&StudentInf_list);
+	m_studentInfList.GetLinkList(&StudentInf_list);
+	m_studentInfList.EvaluateAward1(&StudentInf_list);
+	m_studentInfList.SyncToList(&StudentInf_list);
 }
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
@@ -302,9 +297,9 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 	}
 
 	std::list<StudentInf> StudentInf_list;
-	m_studentInfList.syncToLinkList(&StudentInf_list);
-	m_studentInfList.evaluateAward2(&StudentInf_list);
-	m_studentInfList.syncToList(&StudentInf_list);
+	m_studentInfList.GetLinkList(&StudentInf_list);
+	m_studentInfList.EvaluateAward2(&StudentInf_list);
+	m_studentInfList.SyncToList(&StudentInf_list);
 }
 
 
@@ -320,20 +315,11 @@ void CStudentRatingSystemDlg::OnBnClickedDeleteall()
 
 void CStudentRatingSystemDlg::OnBnClickedCheck()
 {
-	if (m_studentInfList.markIncorrectCell())
+	if (m_studentInfList.MarkIncorrectCell())
 	{
 		MessageBox(_T("恭喜，您的数据完整。"), _T("数据完整"), MB_ICONINFORMATION);
 	}
 	else {
 		MessageBox(_T("您的数据不完整。"), _T("数据不完整"), MB_ICONERROR);
 	}
-}
-
-
-
-void CStudentRatingSystemDlg::OnBnClickedOk()
-{
-	m_studentInfList.calcAverage = false;
-
-	CDialogEx::OnOK();
 }

@@ -15,7 +15,7 @@ public:
 	bool saveFile(bool haveHeader, std::list<StudentInf>* plist);
 	bool saveFile(bool haveHeader, CMyListCtrlExt * plist);
 	bool parseFile(bool haveHeader, std::list<StudentInf>* plist);
-	bool parseFile(bool haveHeader, CMyListCtrlExt * dlg, void(CMyListCtrlExt::* ptrAddFunc)(StudentInf &, bool));
+	bool parseFile(bool haveHeader, CMyListCtrlExt * plist);
 	bool parseLine(wchar_t * line, StudentInf & inf);
 	bool parseLine(StudentInf & inf);
 	bool composeLine(StudentInf & inf, CString & str);

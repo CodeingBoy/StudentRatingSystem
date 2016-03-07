@@ -8,8 +8,9 @@
 #include "MyListCtrlExt.h"
 #include "StudentInf.h"
 
-
 #include "afxwin.h"
+
+
 
 // CStudentRatingSystemDlg ¶Ô»°¿ò
 class CStudentRatingSystemDlg : public CDialogEx

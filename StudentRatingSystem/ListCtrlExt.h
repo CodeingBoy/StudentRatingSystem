@@ -88,8 +88,8 @@ public:
 	BOOL IsRowReadOnly(int nRow);
 	BOOL IsCellReadOnly(int nRow, int nColumn);
 
-	BOOL DisplayEditor(int nItem, int nSubItem);
-	void HideEditor(BOOL bUpdate = TRUE);
+	virtual BOOL DisplayEditor(int nItem, int nSubItem);
+	virtual void HideEditor(BOOL bUpdate = TRUE);
 
 	void SetCellColors(int nRow, int nColumn, COLORREF clrBack, COLORREF clrText);
 	void SetRowColors(int nItem, COLORREF clrBk, COLORREF clrText);

@@ -15,7 +15,7 @@ CMyListCtrlExt::CMyListCtrlExt()
 
 CMyListCtrlExt::~CMyListCtrlExt()
 {
-	
+
 }
 
 BOOL CMyListCtrlExt::OnNMDblclk(NMHDR* pNMHDR, LRESULT* pResult)
@@ -38,10 +38,9 @@ BOOL CMyListCtrlExt::OnNMDblclk(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 BEGIN_MESSAGE_MAP(CMyListCtrlExt, CListCtrlExt)
-ON_WM_LBUTTONDOWN()
-ON_NOTIFY_REFLECT(LVN_INSERTITEM, &CMyListCtrlExt::OnLvnInsertitem)
-ON_NOTIFY_REFLECT(LVN_DELETEITEM, &CMyListCtrlExt::OnLvnDeleteitem)
-ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, &CMyListCtrlExt::OnLvnItemchanged)
+	ON_WM_LBUTTONDOWN()
+	ON_NOTIFY_REFLECT(LVN_INSERTITEM, &CMyListCtrlExt::OnLvnInsertitem)
+	ON_NOTIFY_REFLECT(LVN_DELETEITEM, &CMyListCtrlExt::OnLvnDeleteitem)
 END_MESSAGE_MAP()
 
 
@@ -52,7 +51,7 @@ void CMyListCtrlExt::OnLButtonDown(UINT nFlags, CPoint point)
 	CListCtrlExt::OnLButtonDown(nFlags, point);
 }
 
-void CMyListCtrlExt::AddNewLine(StudentInf &inf, bool hasAwardInf) {
+void CMyListCtrlExt::AddNewLine(StudentInf &inf) {
 	int newline_index = GetItemCount() - 2; // 最后一行显示平均值，倒数第二行为预留
 
 	CString ID, mark[4];
@@ -71,60 +70,52 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf, bool hasAwardInf) {
 		{
 			SetItemText(newline_index, i + 3, _T("错误"));
 			SetCellColors(newline_index, i + 3, COLOR_ERR, -1);
-		}
-		else {
+		} else {
 			SetItemText(newline_index, i + 3, mark[i]);
 		}
 	}
 
-	if (hasAwardInf) {
-
-		if (inf.hasAward == 1){
+	if (inf.hasAward == -1)	{
+		SetItemText(newline_index, 7, _T("N/A"));
+		SetItemText(newline_index, 8, _T("N/A"));
+	} else {
+		if (inf.hasAward == 1) {
 			SetItemText(newline_index, 7, _T("是"));
 			SetCellColors(newline_index, 7, COLOR_YES, -1);
-		}else {
+		} else {
 			SetItemText(newline_index, 7, _T("否"));
 			SetCellColors(newline_index, 7, COLOR_NO, -1);
 		}
 
-		if (inf.hasAward == 2){
+		if (inf.hasAward == 2) {
 			SetItemText(newline_index, 8, _T("是"));
 			SetCellColors(newline_index, 8, COLOR_YES, -1);
-		}else {
+		} else {
 			SetItemText(newline_index, 8, _T("否"));
 			SetCellColors(newline_index, 8, COLOR_NO, -1);
 		}
-
-	}else {
-		SetItemText(newline_index, 7, _T("N/A"));
-		SetItemText(newline_index, 8, _T("N/A"));
 	}
+
+	// 将添加的单元计入总计中
+	total[0] += inf.mark_subject1;
+	total[1] += inf.mark_subject2;
+	total[2] += inf.mark_subject3;
 
 }
 
 bool CMyListCtrlExt::isDataCorrect() {
-	bool isCorrect = true;
+	isCorrect = true;
 	for (int i = 0; i < GetItemCount() - 2; i++) {
 		for (int j = 3; j <= 6; j++)
-		{
-			isCorrect = isDataCorrect(i, j);
-		}
+			if (!(isCorrect = isDataCorrect(i, j)))
+				return false;
 	}
-
 	return isCorrect;
 }
 
 bool CMyListCtrlExt::isDataCorrect(int row, int column) {
 	if (GetItemText(row, column) == _T("") || GetItemText(row, column) == _T("错误"))
 		return false;
-
-// 	if (GetItemText(i, 6) == _T("") ||
-// 		GetItemText(i, 6) == _T("错误")) {
-// 		CString str;
-// 		str.Format(_T("%.1f"), _wtof(GetItemText(i, 3)) +
-// 			_wtof(GetItemText(i, 4)) + _wtof(GetItemText(i, 5)));
-// 		SetItemText(i, 6, str);
-// 	}
 
 	return true;
 }
@@ -147,7 +138,7 @@ bool CMyListCtrlExt::isDataCorrect(std::list<StudentInf> *plist) {
 	return true;
 }
 
-bool CMyListCtrlExt::markIncorrectCell() {
+bool CMyListCtrlExt::MarkIncorrectCell() {
 	bool isCorrect = true;
 	for (int i = 0; i < GetItemCount() - 2; i++) {
 		for (int j = 3; j <= 6; j++)
@@ -165,39 +156,37 @@ bool CMyListCtrlExt::markIncorrectCell() {
 
 void CMyListCtrlExt::RefreshAverage() {
 
-	if (!calcAverage) return;
-	float average[4] = { 0,0,0,0 };
+	int lastLineIndex = GetItemCount() - 1;
+	if (!isCorrect) {
+		for (int i = 0; i < 4; i++)
+			SetItemText(lastLineIndex, i + 3, _T("错误"));
+		return;
+	}
+
+	double average[4] = { 0,0,0,0 };
 	CalculateAverage(average);
 
-	int lastLineIndex = GetItemCount() - 1;
 	CString average_str[4];
-	for (int i = 0; i < 4; i++)
-	{
+	for (int i = 0; i < 4; i++) {
 		average_str[i].Format(_T("%.1f"), average[i]);
 		SetItemText(lastLineIndex, i + 3, average_str[i]);
 	}
 
 }
 
-void CMyListCtrlExt::CalculateAverage(float average[]) {
-
-	
-	for (int i = 0; i < GetItemCount() - 2; i++)
-	{
-		// 累加起来
-		average[0] += _wtof(GetItemText(i, 3));
-		average[1] += _wtof(GetItemText(i, 4));
-		average[2] += _wtof(GetItemText(i, 5));
-	}
+void CMyListCtrlExt::CalculateAverage(double average[]) {
+	// 从总和中提取数据
+	average[0] = total[0];
+	average[1] = total[1];
+	average[2] = total[2];
+	average[3] = total[0] + total[1] + total[2];
 
 	int studentNumber = GetItemCount() - 2;
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 		average[i] /= studentNumber; // 除以学生数
-	average[3] = average[0] + average[1] + average[2]; // 偷个懒
-
 }
 
-void CMyListCtrlExt::evaluateAward1(std::list<StudentInf> *plist) {
+void CMyListCtrlExt::EvaluateAward1(std::list<StudentInf> *plist) {
 	plist->sort(cmp_total); // 先从大到小排序
 
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
@@ -206,16 +195,14 @@ void CMyListCtrlExt::evaluateAward1(std::list<StudentInf> *plist) {
 	{
 		if (StudentsListIterator->mark_subject1 >= 75 &&
 			StudentsListIterator->mark_subject2 >= 75 &&
-			StudentsListIterator->mark_subject3 >= 75)
-		{
+			StudentsListIterator->mark_subject3 >= 75) {
 			StudentsListIterator->hasAward = 1;
 			return; // 获奖名额只有一人，评定结束
 		}
-
 	}
 }
 
-void CMyListCtrlExt::evaluateAward2(std::list<StudentInf> *plist) {
+void CMyListCtrlExt::EvaluateAward2(std::list<StudentInf> *plist) {
 	plist->sort(cmp_total); // 先从大到小排序
 
 	int num = 1;
@@ -238,15 +225,15 @@ void CMyListCtrlExt::evaluateAward2(std::list<StudentInf> *plist) {
 	}
 }
 
-void CMyListCtrlExt::syncToLinkList(std::list<StudentInf> *plist) {
+void CMyListCtrlExt::GetLinkList(std::list<StudentInf> *plist) {
 	plist->clear();
 	for (int i = 0; i < GetItemCount() - 2; i++)
 	{
-		plist->push_back(getData(i));
+		plist->push_back(GetData(i));
 	}
 }
 
-StudentInf CMyListCtrlExt::getData(int row)
+StudentInf CMyListCtrlExt::GetData(int row)
 {
 	StudentInf inf;
 
@@ -266,21 +253,18 @@ StudentInf CMyListCtrlExt::getData(int row)
 	return inf;
 }
 
-void CMyListCtrlExt::syncToList(std::list<StudentInf>* plist) {
-	calcAverage = false;
-
+void CMyListCtrlExt::SyncToList(std::list<StudentInf>* plist) {
+	
 	InitializeList();
-
-	calcAverage = false;
 
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
 	StudentsListIterator != plist->end();
 		++StudentsListIterator)
 	{
-		AddNewLine(*StudentsListIterator, true);
+		AddNewLine(*StudentsListIterator);
 	}
 
-	calcAverage = true;
+	
 }
 
 void CMyListCtrlExt::PrepareList() // 初始化列表（仅执行一次）
@@ -320,7 +304,7 @@ void CMyListCtrlExt::PrepareList() // 初始化列表（仅执行一次）
 }
 
 void CMyListCtrlExt::InitializeList() { // 初始化列表（可执行多次）
-	calcAverage = false;
+	
 	DeleteAllItems();
 
 	int averageIndex = InsertItem(GetItemCount(), _T("平均值"));
@@ -332,14 +316,13 @@ void CMyListCtrlExt::InitializeList() { // 初始化列表（可执行多次）
 	InsertItem(GetItemCount() - 1, _T("          +"));
 	SetRowReadOnly(GetItemCount() - 1);
 
-	calcAverage = true;
 }
 
 void CMyListCtrlExt::OnLvnInsertitem(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	
-	if (GetItemCount() > 2 && calcAverage)
+
+	if (GetItemCount() > 2)
 		RefreshAverage();
 
 	*pResult = 0;
@@ -351,47 +334,52 @@ void CMyListCtrlExt::OnLvnDeleteitem(NMHDR *pNMHDR, LRESULT *pResult)
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	if (pNMListView)
-	{
+	if (pNMListView) {
 		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
-		// 		int deletingIndex = GetSelectionMark();
-		// 		if (GetItemCount() > 2 && nItem <= GetItemCount() - 3) {
-		// 			CString deletingItem_ID = GetItemText(deletingIndex, 0);
-		// 			for (std::list<StudentInf>::iterator StudentsListIterator = StudentInf_list.begin();
-		// 			StudentsListIterator != StudentInf_list.end();
-		// 				++StudentsListIterator)
-		// 			{
-		// 				if (StudentsListIterator->studentID == _wtof(deletingItem_ID)) { // 学号一致
-		// 					StudentInf_list.erase(StudentsListIterator);
-		// 					break;
-		// 				}
-		// 			}
-		
-		//}
-
+		// 将删除的单元从总计中剔除
+		total[0] -= _wtof(GetItemText(nItem, 3));
+		total[1] -= _wtof(GetItemText(nItem, 4));
+		total[2] -= _wtof(GetItemText(nItem, 5));
 	}
 
-	if (GetItemCount() > 2 && calcAverage)
+	if (GetItemCount() > 2)
 		RefreshAverage();
 
 	*pResult = 0;
 }
 
+BOOL CMyListCtrlExt::DisplayEditor(int nItem, int nSubItem) {
+	BOOL rtnval = CListCtrlExt::DisplayEditor(nItem, nSubItem);
 
-void CMyListCtrlExt::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	if (pNMListView)
-	{
-		int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
+	if (nSubItem >= 3 && nSubItem <= 5) {
+		modifingItem = nItem;
+		modifingSubItem = nSubItem;
 
-		if (GetItemCount() > 2 && nItem != GetItemCount() - 1 &&
-			calcAverage)
-			RefreshAverage();
+		// 将删除的单元从总计中剔除
+		total[nSubItem - 3] -= _wtof(GetItemText(nItem, nSubItem));
 	}
 
-	*pResult = 0;
+	return rtnval;
+}
+
+void CMyListCtrlExt::HideEditor(BOOL bUpdate) {
+	CListCtrlExt::HideEditor(bUpdate);
+
+	if (modifingItem && modifingSubItem) {
+		// 将改动后的数据重新加入
+		double temp = _wtof(GetItemText(modifingItem, modifingSubItem));
+		total[modifingSubItem - 3] += _wtof(GetItemText(modifingItem, modifingSubItem));
+
+		// 重新计算总分
+		CString totalScore;
+		totalScore.Format(_T("%.1f"), _wtof(GetItemText(modifingItem, 3)) + _wtof(GetItemText(modifingItem, 4))
+			+ _wtof(GetItemText(modifingItem, 5)));
+		SetItemText(modifingItem, 6, totalScore);
+
+		modifingItem = 0;
+		modifingSubItem = 0;
+
+		RefreshAverage();
+	}
 }

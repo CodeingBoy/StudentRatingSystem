@@ -17,29 +17,33 @@ class CMyListCtrlExt :
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLvnDeleteitem(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg BOOL OnNMDblclk(NMHDR * pNMHDR, LRESULT * pResult);
+	afx_msg void OnLvnInsertitem(NMHDR *pNMHDR, LRESULT *pResult);
 private:
 	CEdit m_Edit;
+	bool isCorrect = true;
+	double total[4] = { 0.0 };
 public:
 	CMyListCtrlExt();
 	~CMyListCtrlExt();
-	void AddNewLine(StudentInf & inf, bool hasAwardInf = false);
+
+	void AddNewLine(StudentInf & inf);
 	bool isDataCorrect();
 	bool isDataCorrect(int row, int column);
 	bool isDataCorrect(std::list<StudentInf>* plist);
-	bool markIncorrectCell();
+	bool MarkIncorrectCell();
 	void RefreshAverage();
-	void CalculateAverage(float average[]);
-	void evaluateAward1(std::list<StudentInf>* plist);
-	void evaluateAward2(std::list<StudentInf>* plist);
-	void syncToLinkList(std::list<StudentInf>* plist);
-	StudentInf getData(int row);
-	void syncToList(std::list<StudentInf>* plist);
+	void CalculateAverage(double average[]);
+	void EvaluateAward1(std::list<StudentInf>* plist);
+	void EvaluateAward2(std::list<StudentInf>* plist);
+	void GetLinkList(std::list<StudentInf>* plist);
+	StudentInf GetData(int row);
+	void SyncToList(std::list<StudentInf>* plist);
 	void PrepareList();
 	void InitializeList();
-	bool calcAverage = true;
-	afx_msg void OnLvnInsertitem(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnDeleteitem(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+	BOOL DisplayEditor(int nItem, int nSubItem);
+	int modifingItem = 0, modifingSubItem = 0;
+	void HideEditor(BOOL bUpdate = TRUE);
 };
 
