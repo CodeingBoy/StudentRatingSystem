@@ -211,31 +211,38 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 	}
 
 	CStuFileHandler handler(filedlg.GetPathName());
-	if (handler.err != 0) { // 出错处理
+	int err;
+	if ((err = handler.GetError()) != 0) { // 出错处理
 		CString errmsg;
 		errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"),
-			handler.err, handler.err);
+			err, err);
 		MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
 		return; // 立刻析构掉
 	}
 
-	if (handler.parseFile(haveHeader, &m_studentInfList))
+	if (handler.ParseFile(haveHeader, &m_studentInfList))
 	{
-		if (handler.hasDataError) {
+		if (handler.HasDataError())
 			MessageBox(_T("程序发现您的文件中缺少了一部分信息，这些信息可能使得程序统计功能无法正常运行，因此已作标红处理。\n"
 				 "建议您审阅数据以保证数据的正确性。"), _T("文件缺少信息"), MB_ICONERROR);
-		}
-		if (handler.hasExtraInf) {
+
+		if (handler.HasExtraInf())
 			MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
 				 "建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
+
+		int parsedLine;
+		if ((parsedLine = handler.GetParsedLine()) == 0)
+		{
+			MessageBox(_T("您的数据文件为空，因此未导入任何数据"), _T("导入失败"), MB_ICONERROR);
 		}
-
-		m_studentInfList.RefreshAverage();
-
-		MessageBox(_T("导入成功！"), _T("成功！"), MB_ICONINFORMATION);
+		else {
+			CString str;
+			str.Format(_T("已导入 %d 条数据"), handler.GetParsedLine());
+			MessageBox(str, _T("导入成功"), MB_ICONINFORMATION);
+			m_studentInfList.RefreshAverage();
+		}	
 	}
 
-	m_studentInfList.RefreshAverage();
 }
 
 
@@ -262,16 +269,19 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 	}
 
 	CStuFileHandler handler(filedlg.GetPathName(), false);
-	if (handler.err != 0) { // 出错处理
+	int err;
+	if ((err = handler.GetError()) != 0) { // 出错处理
 		CString errmsg;
 		errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"),
-			handler.err, handler.err);
+			err, err);
 		MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
 		return; // 立刻析构掉
 	}
-	if (handler.saveFile(haveHeader, &m_studentInfList))
-	{
+	if (handler.SaveFile(haveHeader, &m_studentInfList)) {
 		MessageBox(_T("保存成功！"), _T("成功！"), MB_ICONINFORMATION);
+	}
+	else {
+		MessageBox(_T("保存失败！"), _T("失败！"), MB_ICONERROR);
 	}
 }
 

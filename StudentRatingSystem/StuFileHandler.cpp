@@ -20,68 +20,66 @@ CStuFileHandler::~CStuFileHandler()
 		fclose(fp);
 }
 
-bool CStuFileHandler::saveFile(bool haveHeader, std::list<StudentInf> *plist) {
+bool CStuFileHandler::SaveFile(bool haveHeader, std::list<StudentInf> *plist) {
 	if (haveHeader)
-		writeLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
+		WriteLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
 
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
 	StudentsListIterator != plist->end();
 		++StudentsListIterator)
 	{
 		CString line;
-		composeLine(*StudentsListIterator, line);
-		writeLine(line.GetBuffer());
+		ComposeLine(*StudentsListIterator, line);
+		WriteLine(line.GetBuffer());
 	}
 
 	return true;
 }
 
-bool CStuFileHandler::saveFile(bool haveHeader, CMyListCtrlExt *plist) {
+bool CStuFileHandler::SaveFile(bool haveHeader, CMyListCtrlExt *plist) {
 	if (haveHeader)
-		writeLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
+		WriteLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
 
 	for (int i = 0; i < plist->GetItemCount() - 2; i++) {
 		CString line;
-		composeLine(plist->GetData(i) , line);
-		writeLine(line.GetBuffer());
+		ComposeLine(plist->GetData(i) , line);
+		WriteLine(line.GetBuffer());
 	}
 
 	return true;
 }
 
-bool CStuFileHandler::parseFile(bool haveHeader, std::list<StudentInf> *plist) {
+bool CStuFileHandler::ParseFile(bool haveHeader, std::list<StudentInf> *plist) {
 	if (haveHeader) {
 		wchar_t temp[1024];
-		readLine(temp); // 丢弃第一行
+		ReadLine(temp); // 丢弃第一行
 	}
 
 	StudentInf inf;
 	while (!feof(fp)) {
-		if (parseLine(inf))
+		if (ParseLine(inf))
 			plist->push_back(inf);
 	}
 
 	return true;
 }
 
-bool CStuFileHandler::parseFile(bool haveHeader, CMyListCtrlExt *plist) {
+bool CStuFileHandler::ParseFile(bool haveHeader, CMyListCtrlExt *plist) {
 	if (haveHeader)	{
 		wchar_t temp[1024];
-		readLine(temp); // 丢弃第一行
+		ReadLine(temp); // 丢弃第一行
 	}
 
 	StudentInf inf;
 	while (!feof(fp)) {
-		if (parseLine(inf))
+		if (ParseLine(inf))
 			plist->AddNewLine(inf);
 	}
-
-	plist->RefreshAverage();
 
 	return true;
 }
 
-bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
+bool CStuFileHandler::ParseLine(wchar_t *line, StudentInf &inf)
 {
 	// 分割字符串
 	wchar_t *pStr, *pContext;
@@ -130,21 +128,22 @@ bool CStuFileHandler::parseLine(wchar_t *line, StudentInf &inf)
 		}
 	}
 	
+	parsedLine++;
 
 	return true;
 }
 
-bool CStuFileHandler::parseLine(StudentInf &inf)
+bool CStuFileHandler::ParseLine(StudentInf &inf)
 {
 	wchar_t line[1024];
 	memset(line, NULL, 1024); // 设置为空
-	if (!readLine(line) || !wcscmp(line, _T("")))
+	if (!ReadLine(line) || !wcscmp(line, _T("")))
 		return false;
 
-	return parseLine(line, inf);
+	return ParseLine(line, inf);
 }
 
-bool CStuFileHandler::composeLine(StudentInf &inf, CString &str)
+bool CStuFileHandler::ComposeLine(StudentInf &inf, CString &str)
 {
 	CString award;
 	switch (inf.hasAward)
@@ -166,26 +165,26 @@ bool CStuFileHandler::composeLine(StudentInf &inf, CString &str)
 	return true;
 }
 
-bool CStuFileHandler::saveAwardList(std::list<StudentInf> *plist) {
-	writeLine(_T("学习标兵："));
+bool CStuFileHandler::SaveAwardList(std::list<StudentInf> *plist) {
+	WriteLine(_T("学习标兵："));
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
 	StudentsListIterator != plist->end();
 		++StudentsListIterator)
 	{
 		if (StudentsListIterator->hasAward == 1)
 		{
-			writeLine(StudentsListIterator->name);
+			WriteLine(StudentsListIterator->name);
 		}
 
 	}
 
-	writeLine(_T("")); // 换行
-	writeLine(_T("三好学生："));
+	WriteLine(_T("")); // 换行
+	WriteLine(_T("三好学生："));
 	for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
 	StudentsListIterator != plist->end();
 		++StudentsListIterator) {
 		if (StudentsListIterator->hasAward == 2) {
-			writeLine(StudentsListIterator->name);
+			WriteLine(StudentsListIterator->name);
 		}
 
 	}
@@ -193,15 +192,34 @@ bool CStuFileHandler::saveAwardList(std::list<StudentInf> *plist) {
 	return true;
 }
 
-bool CStuFileHandler::readLine(wchar_t *output) {
+bool CStuFileHandler::ReadLine(wchar_t *output) {
 	if (!fp || feof(fp))return false;
 	fgetws(output, 1024, fp);  //读取一行
 	return true;
 }
 
-bool CStuFileHandler::writeLine(wchar_t *content) {
+bool CStuFileHandler::WriteLine(wchar_t *content) {
 	if (!fp || feof(fp))return false;
 	fputws(content, fp);
 	fputws(_T("\n"), fp);
 	return true;
+}
+
+bool CStuFileHandler::HasExtraInf()
+{
+	return hasExtraInf;
+}
+
+bool CStuFileHandler::HasDataError()
+{
+	return hasDataError;
+}
+
+int CStuFileHandler::GetError()
+{
+	return err;
+}
+
+unsigned int CStuFileHandler::GetParsedLine() {
+	return parsedLine;
 }
