@@ -24,6 +24,7 @@ private:
 	CEdit m_Edit;
 	bool isCorrect = true;
 	double total[4] = { 0.0 };
+	int modifingItem = 0, modifingSubItem = 0;
 public:
 	CMyListCtrlExt();
 	~CMyListCtrlExt();
@@ -43,7 +44,6 @@ public:
 	void PrepareList();
 	void InitializeList();
 	BOOL DisplayEditor(int nItem, int nSubItem);
-	int modifingItem = 0, modifingSubItem = 0;
 	void HideEditor(BOOL bUpdate = TRUE);
 };
 
