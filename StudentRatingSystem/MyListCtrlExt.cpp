@@ -1,9 +1,19 @@
 #include "stdafx.h"
 #include "MyListCtrlExt.h"
+#include <vector>
+#include <algorithm>
 
 bool cmp_total(StudentInf first, StudentInf second)
 {
     if (first.mark_total <= second.mark_total)
+        return false;
+    else
+        return true;
+}
+
+bool cmp_class(StudentInf first, StudentInf second)
+{
+    if (first.studentClass != second.studentClass)
         return false;
     else
         return true;
@@ -120,9 +130,9 @@ bool CMyListCtrlExt::isDataCorrect(int row, int column)
     return true;
 }
 
-bool CMyListCtrlExt::isDataCorrect(std::list<StudentInf> *plist)
+bool CMyListCtrlExt::isDataCorrect(std::vector<StudentInf> *plist)
 {
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         if (StudentsListIterator->mark_subject1 < 0 ||
@@ -187,11 +197,46 @@ void CMyListCtrlExt::CalculateAverage(double average[])
         average[i] /= studentNumber; // 除以学生数
 }
 
-void CMyListCtrlExt::EvaluateAward1(std::list<StudentInf> *plist)
+std::vector<StudentInf> CMyListCtrlExt::EvaluateAward(std::vector<StudentInf> *plist, bool isAwardOne)
 {
-    plist->sort(cmp_total); // 先从大到小排序
+    sort(plist->begin(), plist->end(), cmp_class);  // 按班级排序
 
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    std::vector<StudentInf> rtnList;
+
+    std::vector<StudentInf>::iterator classListIterator = plist->begin();
+    while (classListIterator != plist->end()) {
+        std::vector<StudentInf> classList;
+
+        CString frontClass = classListIterator->studentClass;
+        CString latterClass = classListIterator->studentClass;
+        while (frontClass == latterClass && classListIterator != plist->end()) {
+            classList.push_back(*classListIterator);
+            frontClass = latterClass;
+            classListIterator++;
+            if (classListIterator == plist->end())
+                break;
+            latterClass = classListIterator->studentClass;
+        }
+
+        if (isAwardOne)
+            EvaluateAward1(&classList);
+        else
+            EvaluateAward2(&classList);
+
+        for (std::vector<StudentInf>::iterator rtnIterator = classList.begin();
+                rtnIterator != classList.end(); rtnIterator++) {
+            rtnList.push_back(*rtnIterator);
+        }
+    }
+
+    return rtnList;
+}
+
+void CMyListCtrlExt::EvaluateAward1(std::vector<StudentInf> *plist)
+{
+    sort(plist->begin(), plist->end(), cmp_total);  // 按总分排序
+
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         if (StudentsListIterator->mark_subject1 >= 75 &&
@@ -203,14 +248,14 @@ void CMyListCtrlExt::EvaluateAward1(std::list<StudentInf> *plist)
     }
 }
 
-void CMyListCtrlExt::EvaluateAward2(std::list<StudentInf> *plist)
+void CMyListCtrlExt::EvaluateAward2(std::vector<StudentInf> *plist)
 {
-    plist->sort(cmp_total); // 先从大到小排序
+    sort(plist->begin(), plist->end(), cmp_total);  // 按总分排序
 
     int num = 1;
     const int totalNum = GetItemCount() - 2;
 
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         if (num <= (int)(totalNum * 0.05 + 0.5) && StudentsListIterator->hasAward != 1) { // 不符合不评比
@@ -225,7 +270,7 @@ void CMyListCtrlExt::EvaluateAward2(std::list<StudentInf> *plist)
     }
 }
 
-void CMyListCtrlExt::GetLinkList(std::list<StudentInf> *plist)
+void CMyListCtrlExt::GetLinkList(std::vector<StudentInf> *plist)
 {
     plist->clear();
     for (int i = 0; i < GetItemCount() - 2; i++)
@@ -237,8 +282,8 @@ StudentInf CMyListCtrlExt::GetData(int row)
     StudentInf inf;
 
     inf.studentID = _wtof(GetItemText(row, 0));
-    wcscpy_s(inf.name, GetItemText(row, 1));
-    wcscpy_s(inf.studentClass, GetItemText(row, 2));
+    wcscpy(inf.name, GetItemText(row, 1));
+    wcscpy(inf.studentClass, GetItemText(row, 2));
     inf.mark_subject1 = _wtof(GetItemText(row, 3));
     inf.mark_subject2 = _wtof(GetItemText(row, 4));
     inf.mark_subject3 = _wtof(GetItemText(row, 5));
@@ -252,12 +297,12 @@ StudentInf CMyListCtrlExt::GetData(int row)
     return inf;
 }
 
-void CMyListCtrlExt::SyncToList(std::list<StudentInf>* plist)
+void CMyListCtrlExt::SyncToList(std::vector<StudentInf>* plist)
 {
 
     InitializeList();
 
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator)
         AddNewLine(*StudentsListIterator);

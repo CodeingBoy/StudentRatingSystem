@@ -277,10 +277,10 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
         return;
     }
 
-    std::list<StudentInf> StudentInf_list;
+    std::vector<StudentInf> StudentInf_list, rtnlist;
     m_studentInfList.GetLinkList(&StudentInf_list);
-    m_studentInfList.EvaluateAward1(&StudentInf_list);
-    m_studentInfList.SyncToList(&StudentInf_list);
+    rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, true);
+    m_studentInfList.SyncToList(&rtnlist);
 }
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
@@ -290,7 +290,7 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
         return;
     }
 
-    std::list<StudentInf> StudentInf_list;
+    std::vector<StudentInf> StudentInf_list;
     m_studentInfList.GetLinkList(&StudentInf_list);
     m_studentInfList.EvaluateAward2(&StudentInf_list);
     m_studentInfList.SyncToList(&StudentInf_list);

@@ -20,12 +20,12 @@ CStuFileHandler::~CStuFileHandler()
         fclose(fp);
 }
 
-bool CStuFileHandler::SaveFile(bool haveHeader, std::list<StudentInf> *plist)
+bool CStuFileHandler::SaveFile(bool haveHeader, std::vector<StudentInf> *plist)
 {
     if (haveHeader)
         WriteLine(_T("学号,姓名,班级,英语成绩,数学成绩,C++成绩,总成绩,获奖情况"));
 
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         CString line;
@@ -50,7 +50,7 @@ bool CStuFileHandler::SaveFile(bool haveHeader, CMyListCtrlExt *plist)
     return true;
 }
 
-bool CStuFileHandler::ParseFile(bool haveHeader, std::list<StudentInf> *plist)
+bool CStuFileHandler::ParseFile(bool haveHeader, std::vector<StudentInf> *plist)
 {
     if (haveHeader) {
         wchar_t temp[1024];
@@ -97,10 +97,10 @@ bool CStuFileHandler::ParseLine(wchar_t *line, StudentInf &inf)
             inf.studentID = _wtof(pStr);
             break;
         case 2:
-            wcscpy_s(inf.name, pStr);
+            wcscpy(inf.name, pStr);
             break;
         case 3:
-            wcscpy_s(inf.studentClass, pStr);
+            wcscpy(inf.studentClass, pStr);
             break;
         case 4:
             inf.mark_subject1 = _wtof(pStr);
@@ -165,10 +165,10 @@ bool CStuFileHandler::ComposeLine(StudentInf &inf, CString &str)
     return true;
 }
 
-bool CStuFileHandler::SaveAwardList(std::list<StudentInf> *plist)
+bool CStuFileHandler::SaveAwardList(std::vector<StudentInf> *plist)
 {
     WriteLine(_T("学习标兵："));
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         if (StudentsListIterator->hasAward == 1) {
@@ -179,7 +179,7 @@ bool CStuFileHandler::SaveAwardList(std::list<StudentInf> *plist)
 
     WriteLine(_T("")); // 换行
     WriteLine(_T("三好学生："));
-    for (std::list<StudentInf>::iterator StudentsListIterator = plist->begin();
+    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
             StudentsListIterator != plist->end();
             ++StudentsListIterator) {
         if (StudentsListIterator->hasAward == 2) {
