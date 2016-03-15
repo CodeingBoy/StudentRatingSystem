@@ -3,6 +3,7 @@
 #include "StudentInf.h"
 
 #include <vector>
+#include <map>
 #include <algorithm>
 
 #define IDC_EDIT 1007
@@ -10,6 +11,10 @@
 #define COLOR_ERR RGB(255, 0, 0)
 #define COLOR_YES RGB(134, 71, 63)
 #define COLOR_NO RGB(100, 106, 88)
+
+typedef std::multimap<CString, StudentInf*> ClassMap;
+
+class CStuFileHandler;
 
 class CMyListCtrlExt :
     public CListCtrlExt
@@ -39,12 +44,14 @@ class CMyListCtrlExt :
         std::vector<StudentInf> EvaluateAward(std::vector<StudentInf>* plist, bool isAwardOne);
         void EvaluateAward1(std::vector<StudentInf>* plist);
         void EvaluateAward2(std::vector<StudentInf>* plist);
-        void GetLinkList(std::vector<StudentInf>* plist);
+        void GetVector(std::vector<StudentInf>* plist);
         StudentInf GetData(int row);
         void SyncToList(std::vector<StudentInf>* plist);
         void PrepareList();
         void InitializeList();
         BOOL DisplayEditor(int nItem, int nSubItem);
         void HideEditor(BOOL bUpdate = TRUE);
+        bool SaveAwardList(CStuFileHandler & handler);
+        ClassMap* getClassMap(std::vector<StudentInf> & container);
 };
 

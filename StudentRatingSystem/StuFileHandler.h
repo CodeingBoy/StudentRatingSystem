@@ -2,10 +2,11 @@
 
 #include "StudentInf.h"
 #include "StudentRatingSystemDlg.h"
-#include "MyListCtrlExt.h"
 
 #include <vector>
 #include <algorithm>
+
+class CMyListCtrlExt;
 
 class CStuFileHandler
 {
@@ -21,6 +22,7 @@ class CStuFileHandler
         bool ComposeLine(StudentInf & inf, CString & str);
         bool SaveAwardList(std::vector<StudentInf> *plist);
         bool ReadLine(wchar_t * output);
+        bool Write(wchar_t * content);
         bool WriteLine(wchar_t * content);
         bool HasExtraInf();
         bool HasDataError();

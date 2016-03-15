@@ -165,36 +165,17 @@ bool CStuFileHandler::ComposeLine(StudentInf &inf, CString &str)
     return true;
 }
 
-bool CStuFileHandler::SaveAwardList(std::vector<StudentInf> *plist)
-{
-    WriteLine(_T("学习标兵："));
-    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
-            StudentsListIterator != plist->end();
-            ++StudentsListIterator) {
-        if (StudentsListIterator->hasAward == 1) {
-            WriteLine(StudentsListIterator->name);
-        }
-
-    }
-
-    WriteLine(_T("")); // 换行
-    WriteLine(_T("三好学生："));
-    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
-            StudentsListIterator != plist->end();
-            ++StudentsListIterator) {
-        if (StudentsListIterator->hasAward == 2) {
-            WriteLine(StudentsListIterator->name);
-        }
-
-    }
-
-    return true;
-}
-
 bool CStuFileHandler::ReadLine(wchar_t *output)
 {
     if (!fp || feof(fp))return false;
     fgetws(output, 1024, fp);  //读取一行
+    return true;
+}
+
+bool CStuFileHandler::Write(wchar_t *content)
+{
+    if (!fp || feof(fp))return false;
+    fputws(content, fp);
     return true;
 }
 

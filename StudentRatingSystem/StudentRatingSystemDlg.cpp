@@ -78,6 +78,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
     ON_BN_CLICKED(IDC_evaluateAward2, &CStudentRatingSystemDlg::OnBnClickedevaluateaward2)
     ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
     ON_BN_CLICKED(IDC_CHECK, &CStudentRatingSystemDlg::OnBnClickedCheck)
+    ON_BN_CLICKED(IDC_EXPORT_AWARD, &CStudentRatingSystemDlg::OnBnClickedExportAward)
 END_MESSAGE_MAP()
 
 
@@ -235,7 +236,7 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 
 void CStudentRatingSystemDlg::OnBnClickedExport()
 {
-    CFileDialog filedlg(FALSE, NULL, NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST,
+    CFileDialog filedlg(FALSE, _T("csv"), NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST,
                         _T("逗号分隔符文件(*.csv)|*.csv|文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
     if (filedlg.DoModal() != IDOK) // 取消了
         return;
@@ -278,7 +279,7 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
     }
 
     std::vector<StudentInf> StudentInf_list, rtnlist;
-    m_studentInfList.GetLinkList(&StudentInf_list);
+    m_studentInfList.GetVector(&StudentInf_list);
     rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, true);
     m_studentInfList.SyncToList(&rtnlist);
 }
@@ -290,10 +291,10 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
         return;
     }
 
-    std::vector<StudentInf> StudentInf_list;
-    m_studentInfList.GetLinkList(&StudentInf_list);
-    m_studentInfList.EvaluateAward2(&StudentInf_list);
-    m_studentInfList.SyncToList(&StudentInf_list);
+    std::vector<StudentInf> StudentInf_list, rtnlist;
+    m_studentInfList.GetVector(&StudentInf_list);
+    rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, false);
+    m_studentInfList.SyncToList(&rtnlist);
 }
 
 
@@ -314,4 +315,30 @@ void CStudentRatingSystemDlg::OnBnClickedCheck()
     } else {
         MessageBox(_T("您的数据不完整。"), _T("数据不完整"), MB_ICONERROR);
     }
+}
+
+void CStudentRatingSystemDlg::OnBnClickedExportAward()
+{
+
+    CFileDialog filedlg(FALSE, _T("txt"), NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST ,
+                        _T("文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
+    if (filedlg.DoModal() != IDOK) // 取消了
+        return;
+
+    CStuFileHandler handler(filedlg.GetPathName(), false);
+    int err;
+    if ((err = handler.GetError()) != 0) { // 出错处理
+        CString errmsg;
+        errmsg.Format(_T("打开文件失败！\n返回的错误代码：%d，请搜索\"errno %d\"以获取更详细的信息。"), err, err);
+        MessageBox(errmsg, _T("出现错误"), MB_ICONERROR);
+        return; // 立刻析构掉
+
+    }
+
+    if (m_studentInfList.SaveAwardList(handler)) {
+        MessageBox(_T("保存成功！"), _T("成功！"), MB_ICONINFORMATION);
+    } else {
+        MessageBox(_T("保存失败"), _T("失败"), MB_ICONERROR);
+    }
+
 }

@@ -49,6 +49,8 @@ class CStudentRatingSystemDlg : public CDialogEx
         afx_msg void OnBnClickedevaluateaward2();
         afx_msg void OnBnClickedDeleteall();
         afx_msg void OnBnClickedCheck();
+        CString GetAwardList();
+        afx_msg void OnBnClickedExportAward();
 };
 
 

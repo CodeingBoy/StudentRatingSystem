@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "MyListCtrlExt.h"
+
 #include <vector>
+#include <map>
 #include <algorithm>
+#include "StuFileHandler.h"
+
 
 bool cmp_total(StudentInf first, StudentInf second)
 {
@@ -13,10 +17,10 @@ bool cmp_total(StudentInf first, StudentInf second)
 
 bool cmp_class(StudentInf first, StudentInf second)
 {
-    if (first.studentClass != second.studentClass)
-        return false;
-    else
+    if (wcscmp(first.studentClass, second.studentClass))
         return true;
+    else
+        return false;
 }
 
 CMyListCtrlExt::CMyListCtrlExt()
@@ -199,23 +203,17 @@ void CMyListCtrlExt::CalculateAverage(double average[])
 
 std::vector<StudentInf> CMyListCtrlExt::EvaluateAward(std::vector<StudentInf> *plist, bool isAwardOne)
 {
-    sort(plist->begin(), plist->end(), cmp_class);  // 按班级排序
+    ClassMap *pclassMap = getClassMap(*plist);   // 按班级排列
 
     std::vector<StudentInf> rtnList;
 
-    std::vector<StudentInf>::iterator classListIterator = plist->begin();
-    while (classListIterator != plist->end()) {
+    // 遍历
+    for (ClassMap::iterator iter = pclassMap->begin(); iter != pclassMap->end(); iter = pclassMap->upper_bound(iter->first)) {
         std::vector<StudentInf> classList;
 
-        CString frontClass = classListIterator->studentClass;
-        CString latterClass = classListIterator->studentClass;
-        while (frontClass == latterClass && classListIterator != plist->end()) {
-            classList.push_back(*classListIterator);
-            frontClass = latterClass;
-            classListIterator++;
-            if (classListIterator == plist->end())
-                break;
-            latterClass = classListIterator->studentClass;
+        std::pair<ClassMap::iterator, ClassMap::iterator> res = pclassMap->equal_range(iter->first);
+        for (ClassMap::iterator i = res.first; i != res.second; ++i) {
+            classList.push_back(*i->second);
         }
 
         if (isAwardOne)
@@ -270,7 +268,7 @@ void CMyListCtrlExt::EvaluateAward2(std::vector<StudentInf> *plist)
     }
 }
 
-void CMyListCtrlExt::GetLinkList(std::vector<StudentInf> *plist)
+void CMyListCtrlExt::GetVector(std::vector<StudentInf> *plist)
 {
     plist->clear();
     for (int i = 0; i < GetItemCount() - 2; i++)
@@ -428,4 +426,59 @@ void CMyListCtrlExt::HideEditor(BOOL bUpdate)
 
         RefreshAverage();
     }
+}
+
+bool CMyListCtrlExt::SaveAwardList(CStuFileHandler &handler)
+{
+    std::vector<StudentInf> container;
+    GetVector(&container);
+    ClassMap *pclassMap = getClassMap(container);   // 按班级排列
+
+    std::vector<StudentInf> rtnList;
+
+    // 遍历
+    for (ClassMap::iterator iter = pclassMap->begin(); iter != pclassMap->end(); iter = pclassMap->upper_bound(iter->first)) {
+        std::vector<StudentInf> classList;
+
+        handler.WriteLine(_T("*********************"));
+        handler.Write((*iter->second).studentClass);
+        handler.WriteLine(_T("："));
+
+        handler.WriteLine(_T("")); // 换行
+        handler.WriteLine(_T("学习标兵："));
+        std::pair<ClassMap::iterator, ClassMap::iterator> res = pclassMap->equal_range(iter->first);
+        for (ClassMap::iterator i = res.first; i != res.second; ++i) {
+
+            if ((*i->second).hasAward == 1)
+                handler.WriteLine((*i->second).name);
+        }
+
+        handler.WriteLine(_T("")); // 换行
+        handler.WriteLine(_T("三好学生："));
+        res = pclassMap->equal_range(iter->first);
+        for (ClassMap::iterator i = res.first; i != res.second; ++i) {
+
+            if ((*i->second).hasAward == 2)
+                handler.WriteLine((*i->second).name);
+
+
+        }
+
+        handler.WriteLine(_T("*********************"));
+        handler.WriteLine(_T("")); // 换行
+    }
+
+    return true;
+}
+
+ClassMap* CMyListCtrlExt::getClassMap(std::vector<StudentInf> &container)
+{
+    ClassMap *pclassMap = new std::multimap<CString, StudentInf*>;
+
+    for (std::vector<StudentInf>::iterator classListIterator = container.begin();
+            classListIterator != container.end(); classListIterator++) {
+        pclassMap->insert(std::make_pair(CString(classListIterator->studentClass), classListIterator._Ptr));
+    }
+
+    return pclassMap;
 }

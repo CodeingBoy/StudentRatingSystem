@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+
 // 可以使用 C++ 的面向对象特性进行更好的封装，但为了尊重题目，使用了结构体
 
 typedef struct StudentInf {
@@ -12,3 +14,4 @@ typedef struct StudentInf {
     double mark_total;          // 总成绩
     char hasAward = -1;
 } studentInf;
+
