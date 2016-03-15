@@ -980,7 +980,8 @@ int CALLBACK CListCtrlExt::CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 
 	if(nLeft < 0) nLeft = lParam1;
 	if(nRight < 0) nRight = lParam2;
-	int nCount = This->GetItemCount();
+	// int nCount = This->GetItemCount();  // This is original statement!
+	int nCount = This->GetItemCount() - 2; // Warning: This statement had been modified for personal purpose!
 	if(nLeft < 0 || nRight < 0 || nLeft >= nCount || nRight >= nCount)return 0;
 	nCompare = Compare(nLeft, nRight, lParamSort);
 

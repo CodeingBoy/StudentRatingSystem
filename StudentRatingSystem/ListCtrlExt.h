@@ -88,8 +88,8 @@ public:
 	BOOL IsRowReadOnly(int nRow);
 	BOOL IsCellReadOnly(int nRow, int nColumn);
 
-	BOOL DisplayEditor(int nItem, int nSubItem);
-	void HideEditor(BOOL bUpdate = TRUE);
+	virtual BOOL DisplayEditor(int nItem, int nSubItem);
+	virtual void HideEditor(BOOL bUpdate = TRUE);
 
 	void SetCellColors(int nRow, int nColumn, COLORREF clrBack, COLORREF clrText);
 	void SetRowColors(int nItem, COLORREF clrBk, COLORREF clrText);
@@ -220,7 +220,7 @@ protected:
 	afx_msg void OnNmRclickHeader(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHdnDividerdblclick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	virtual afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
