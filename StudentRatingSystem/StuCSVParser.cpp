@@ -23,9 +23,12 @@ bool CStuCSVParser::Parse(bool haveHeader, std::vector<StudentInf> *plist)
         memset(line, NULL, 1024); // ÉèÖÃÎª¿Õ
         if (!fileHandler->ReadLine(line) || !wcscmp(line, _T("")))
             continue;
-        fileHandler->ReadLine(line);
-        if (Parse(line, inf))
-            plist->push_back(inf);
+        int size = Parse(line, inf);
+        plist->push_back(inf);
+        if (size < 6)
+            hasDataError = true;
+        else if (size > 6)
+            hasExtraInf = true;
         parsedLine++;
     }
 

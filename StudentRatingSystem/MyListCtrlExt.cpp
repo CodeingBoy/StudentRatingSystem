@@ -26,12 +26,13 @@ bool cmp_class(StudentInf first, StudentInf second)
 
 CMyListCtrlExt::CMyListCtrlExt()
 {
+    //m_Edit = new CEdit();
 }
 
 
 CMyListCtrlExt::~CMyListCtrlExt()
 {
-
+    //delete m_Edit;
 }
 
 BOOL CMyListCtrlExt::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
@@ -348,8 +349,8 @@ void CMyListCtrlExt::PrepareList() // 初始化列表（仅执行一次）
 
     CRect Rect(CPoint(0, 0), CSize(100, 500));
     m_Edit.Create(WS_CHILD | WS_TABSTOP | WS_BORDER, Rect, this, IDC_EDIT);
-    SetDefaultEditor(&m_Edit);
     m_Edit.SetFont(GetFont());
+    SetDefaultEditor(&m_Edit);
 
     // 初始化排序
     SetColumnSorting(0, CListCtrlExt::Auto, CListCtrlExt::StringNumberNoCase);
@@ -369,8 +370,9 @@ void CMyListCtrlExt::PrepareList() // 初始化列表（仅执行一次）
 
 void CMyListCtrlExt::InitializeList()   // 初始化列表（可执行多次）
 {
-
     DeleteAllItems();
+
+    total[0] = total[1] = total[2] = total[3] = 0;
 
     int averageIndex = InsertItem(GetItemCount(), _T("平均值"));
     for (int i = 0; i < 4; i++)
@@ -416,6 +418,9 @@ void CMyListCtrlExt::OnLvnDeleteitem(NMHDR *pNMHDR, LRESULT *pResult)
 
 BOOL CMyListCtrlExt::DisplayEditor(int nItem, int nSubItem)
 {
+    if (nItem == GetItemCount() - 2)
+        return 0;
+
     BOOL rtnval = CListCtrlExt::DisplayEditor(nItem, nSubItem);
 
     if (nSubItem >= 3 && nSubItem <= 5) {
@@ -432,6 +437,9 @@ BOOL CMyListCtrlExt::DisplayEditor(int nItem, int nSubItem)
 void CMyListCtrlExt::HideEditor(BOOL bUpdate)
 {
     CListCtrlExt::HideEditor(bUpdate);
+
+    if (GetItemCount() <= 2)
+        return;
 
     if (modifingItem != -1 && modifingSubItem != -1) {
         // 将改动后的数据重新加入
