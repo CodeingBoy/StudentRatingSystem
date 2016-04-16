@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include "StuFileHandler.h"
+#include "resource.h"
 
 
 bool cmp_total(StudentInf first, StudentInf second)
@@ -136,17 +137,18 @@ bool CMyListCtrlExt::isDataCorrect(int row, int column)
 
 bool CMyListCtrlExt::isDataCorrect(std::vector<StudentInf> *plist)
 {
-    for (std::vector<StudentInf>::iterator StudentsListIterator = plist->begin();
-            StudentsListIterator != plist->end();
-            ++StudentsListIterator) {
-        if (StudentsListIterator->mark_subject1 < 0 ||
-                StudentsListIterator->mark_subject2 < 0 ||
-                StudentsListIterator->mark_subject3 < 0)
+    for (std::vector<StudentInf>::iterator ListIterator = plist->begin();
+            ListIterator != plist->end();
+            ++ListIterator) {
+        if (ListIterator->mark_subject1 < 0 ||
+                ListIterator->mark_subject2 < 0 ||
+                ListIterator->mark_subject3 < 0)
             return false;
 
-        if (StudentsListIterator->mark_total < 0)
-            StudentsListIterator->mark_total = StudentsListIterator->mark_subject1 +
-                                               StudentsListIterator->mark_subject2 + StudentsListIterator->mark_subject3;
+        if (ListIterator->mark_total < 0)
+            ListIterator->mark_total = ListIterator->mark_subject1 +
+                                       ListIterator->mark_subject2 +
+                                       ListIterator->mark_subject3;
     }
 
     return true;
@@ -169,7 +171,6 @@ bool CMyListCtrlExt::MarkIncorrectCell()
 
 void CMyListCtrlExt::RefreshAverage()
 {
-
     int lastLineIndex = GetItemCount() - 1;
     if (!isCorrect) {
         for (int i = 0; i < 4; i++)
@@ -199,6 +200,26 @@ void CMyListCtrlExt::CalculateAverage(double average[])
     int studentNumber = GetItemCount() - 2;
     for (int i = 0; i < 4; i++)
         average[i] /= studentNumber; // 除以学生数
+}
+
+void CMyListCtrlExt::MarkNotEnoughCell(bool isMark)
+{
+    for (int i = 0; i < GetItemCount() - 2; i++) {
+        for (int j = 3; j <= 5; j++) {
+            if (_wtof(GetItemText(i, j)) < 75 && isMark)
+                SetCellColors(i, j, COLOR_NOT_ENOUGH, -1);
+            else
+                SetCellColors(i, j, -1, -1);
+        }
+    }
+}
+
+void CMyListCtrlExt::MarkNotEnoughCell(int nRow, int nCol)
+{
+    if(_wtof(GetItemText(nRow, nCol)) < 75)
+        SetCellColors(nRow, nCol, COLOR_NOT_ENOUGH, -1);
+    else
+        SetCellColors(nRow, nCol, -1, -1);
 }
 
 std::vector<StudentInf> CMyListCtrlExt::EvaluateAward(std::vector<StudentInf> *plist, bool isAwardOne)
@@ -422,6 +443,9 @@ void CMyListCtrlExt::HideEditor(BOOL bUpdate)
         totalScore.Format(_T("%.1f"), _wtof(GetItemText(modifingItem, 3)) + _wtof(GetItemText(modifingItem, 4))
                           + _wtof(GetItemText(modifingItem, 5)));
         SetItemText(modifingItem, 6, totalScore);
+
+        if(((CButton *)AfxGetMainWnd()->GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED)
+            MarkNotEnoughCell(modifingItem, modifingSubItem);
 
         modifingItem = 0;
         modifingSubItem = 0;
