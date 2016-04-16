@@ -198,6 +198,7 @@
     <ClInclude Include="HeaderCtrlExt.h" />
     <ClInclude Include="ListCtrlExt.h" />
     <ClInclude Include="MsgHook.h" />
+    <ClInclude Include="MyEdit.h" />
     <ClInclude Include="MyListCtrlExt.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="HeaderCtrlExt.cpp" />
     <ClCompile Include="ListCtrlExt.cpp" />
     <ClCompile Include="MsgHook.cpp" />
+    <ClCompile Include="MyEdit.cpp" />
     <ClCompile Include="MyListCtrlExt.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

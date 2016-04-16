@@ -7,10 +7,9 @@
 
 #include "MyListCtrlExt.h"
 #include "StudentInf.h"
+#include "MyEdit.h"
 
 #include "afxwin.h"
-
-
 
 // CStudentRatingSystemDlg ¶Ô»°¿ò
 class CStudentRatingSystemDlg : public CDialogEx
@@ -52,6 +51,10 @@ class CStudentRatingSystemDlg : public CDialogEx
         CString GetAwardList();
         afx_msg void OnBnClickedExportAward();
         afx_msg void OnBnClickedMarkScore();
+//        virtual void OnOK();
+        afx_msg void OnBnClickedOk();
+    protected:
+        afx_msg LRESULT OnHideeditor(WPARAM wParam, LPARAM lParam);
 };
 
 

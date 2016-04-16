@@ -33,8 +33,6 @@ class CAboutDlg : public CDialogEx
 // й╣ож
     protected:
         DECLARE_MESSAGE_MAP()
-    public:
-//  afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -48,6 +46,7 @@ void CAboutDlg::DoDataExchange(CDataExchange *pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 //  ON_WM_LBUTTONDBLCLK()
+//ON_MESSAGE(WM_HIDEEDITOR, &CAboutDlg::OnHideeditor)
 END_MESSAGE_MAP()
 
 
@@ -81,6 +80,8 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
     ON_BN_CLICKED(IDC_CHECK, &CStudentRatingSystemDlg::OnBnClickedCheck)
     ON_BN_CLICKED(IDC_EXPORT_AWARD, &CStudentRatingSystemDlg::OnBnClickedExportAward)
     ON_BN_CLICKED(IDC_MARK_SCORE, &CStudentRatingSystemDlg::OnBnClickedMarkScore)
+    ON_BN_CLICKED(IDOK, &CStudentRatingSystemDlg::OnBnClickedOk)
+    ON_MESSAGE(WM_HIDEEDITOR, &CStudentRatingSystemDlg::OnHideeditor)
 END_MESSAGE_MAP()
 
 
@@ -374,4 +375,15 @@ void CStudentRatingSystemDlg::OnBnClickedMarkScore()
 {
     m_studentInfList.MarkNotEnoughCell(((CButton *)GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED);
     m_studentInfList.RedrawItems(0, m_studentInfList.GetItemCount() - 2);
+}
+
+void CStudentRatingSystemDlg::OnBnClickedOk()
+{
+    CDialogEx::OnOK();
+}
+
+afx_msg LRESULT CStudentRatingSystemDlg::OnHideeditor(WPARAM wParam, LPARAM lParam)
+{
+    m_studentInfList.HideEditor();
+    return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "ListCtrlExt.h"
 #include "StudentInf.h"
+#include "MyEdit.h"
 
 #include <vector>
 #include <map>
@@ -27,7 +28,7 @@ class CMyListCtrlExt :
         afx_msg BOOL OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
         afx_msg void OnLvnInsertitem(NMHDR *pNMHDR, LRESULT *pResult);
     private:
-        CEdit m_Edit;
+        CMyEdit m_Edit;
         bool isCorrect = true;
         double total[4] = { 0.0 };
         int modifingItem = -1, modifingSubItem = -1;

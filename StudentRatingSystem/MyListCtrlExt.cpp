@@ -431,6 +431,8 @@ BOOL CMyListCtrlExt::DisplayEditor(int nItem, int nSubItem)
         total[nSubItem - 3] -= _wtof(GetItemText(nItem, nSubItem));
     }
 
+    m_Edit.SetFocus();
+
     return rtnval;
 }
 
