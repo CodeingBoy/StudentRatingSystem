@@ -295,8 +295,11 @@ void CMyListCtrlExt::EvaluateAward2(std::vector<StudentInf> *plist)
 void CMyListCtrlExt::GetVector(std::vector<StudentInf> *plist)
 {
     plist->clear();
-    for (int i = 0; i < GetItemCount() - 2; i++)
-        plist->push_back(GetData(i));
+    for (int i = 0; i < GetItemCount() - 2; i++) {
+        StudentInf inf = GetData(i);
+        plist->push_back(inf);
+
+    }
 }
 
 StudentInf CMyListCtrlExt::GetData(int row)

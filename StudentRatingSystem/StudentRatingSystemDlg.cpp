@@ -295,6 +295,13 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 
     std::vector<StudentInf> StudentInf_list, rtnlist;
     m_studentInfList.GetVector(&StudentInf_list);
+
+    for (std::vector<StudentInf>::iterator listIter = StudentInf_list.begin();
+            listIter != StudentInf_list.end(); listIter++) {
+        if (listIter->hasAward == 1)
+            listIter->hasAward = 0;
+    }
+
     rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, true);
     m_studentInfList.SyncToList(&rtnlist);
 
@@ -314,6 +321,13 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 
     std::vector<StudentInf> StudentInf_list, rtnlist;
     m_studentInfList.GetVector(&StudentInf_list);
+
+    for (std::vector<StudentInf>::iterator listIter = StudentInf_list.begin();
+            listIter != StudentInf_list.end(); listIter++) {
+        if (listIter->hasAward == 2)
+            listIter->hasAward = 0;
+    }
+
     rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, false);
     m_studentInfList.SyncToList(&rtnlist);
 
