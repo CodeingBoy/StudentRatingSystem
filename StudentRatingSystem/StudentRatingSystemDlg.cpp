@@ -80,6 +80,7 @@ BEGIN_MESSAGE_MAP(CStudentRatingSystemDlg, CDialogEx)
     ON_BN_CLICKED(IDC_DELETEALL, &CStudentRatingSystemDlg::OnBnClickedDeleteall)
     ON_BN_CLICKED(IDC_CHECK, &CStudentRatingSystemDlg::OnBnClickedCheck)
     ON_BN_CLICKED(IDC_EXPORT_AWARD, &CStudentRatingSystemDlg::OnBnClickedExportAward)
+    ON_BN_CLICKED(IDC_MARK_SCORE, &CStudentRatingSystemDlg::OnBnClickedMarkScore)
 END_MESSAGE_MAP()
 
 
@@ -231,6 +232,7 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
             str.Format(_T("已导入 %d 条数据"), parsedLine);
             MessageBox(str, _T("导入成功"), MB_ICONINFORMATION);
             m_studentInfList.RefreshAverage();
+            OnBnClickedMarkScore();
         }
     }
 
@@ -344,4 +346,11 @@ void CStudentRatingSystemDlg::OnBnClickedExportAward()
         MessageBox(_T("保存失败"), _T("失败"), MB_ICONERROR);
     }
 
+}
+
+
+void CStudentRatingSystemDlg::OnBnClickedMarkScore()
+{
+    m_studentInfList.MarkNotEnoughCell(((CButton *)GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED);
+    m_studentInfList.RedrawItems(0, m_studentInfList.GetItemCount() - 2);
 }

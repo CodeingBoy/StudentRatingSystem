@@ -17,7 +17,7 @@ class CStudentRatingSystemDlg : public CDialogEx
 {
 // 构造
     public:
-        CStudentRatingSystemDlg(CWnd* pParent = NULL);  // 标准构造函数
+        CStudentRatingSystemDlg(CWnd *pParent = NULL);  // 标准构造函数
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -25,7 +25,7 @@ class CStudentRatingSystemDlg : public CDialogEx
 #endif
 
     protected:
-        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+        virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV 支持
 
 
 // 实现
@@ -51,6 +51,7 @@ class CStudentRatingSystemDlg : public CDialogEx
         afx_msg void OnBnClickedCheck();
         CString GetAwardList();
         afx_msg void OnBnClickedExportAward();
+        afx_msg void OnBnClickedMarkScore();
 };
 
 
