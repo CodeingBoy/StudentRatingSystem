@@ -229,11 +229,11 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
         if ((parsedLine = parser.GetParsedLine()) == 0) {
             MessageBox(_T("您的数据文件为空，因此未导入任何数据"), _T("导入失败"), MB_ICONERROR);
         } else {
+            OnBnClickedMarkScore();
             CString str;
             str.Format(_T("已导入 %d 条数据"), parsedLine);
             MessageBox(str, _T("导入成功"), MB_ICONINFORMATION);
             m_studentInfList.RefreshAverage();
-            OnBnClickedMarkScore();
         }
     }
 
@@ -297,6 +297,8 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
     m_studentInfList.GetVector(&StudentInf_list);
     rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, true);
     m_studentInfList.SyncToList(&rtnlist);
+
+    OnBnClickedMarkScore();
 }
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
@@ -314,6 +316,8 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
     m_studentInfList.GetVector(&StudentInf_list);
     rtnlist = m_studentInfList.EvaluateAward(&StudentInf_list, false);
     m_studentInfList.SyncToList(&rtnlist);
+
+    OnBnClickedMarkScore();
 }
 
 
