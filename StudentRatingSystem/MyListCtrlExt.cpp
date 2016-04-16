@@ -433,7 +433,7 @@ void CMyListCtrlExt::HideEditor(BOOL bUpdate)
 {
     CListCtrlExt::HideEditor(bUpdate);
 
-    if (modifingItem && modifingSubItem) {
+    if (modifingItem != -1 && modifingSubItem != -1) {
         // 将改动后的数据重新加入
         double temp = _wtof(GetItemText(modifingItem, modifingSubItem));
         total[modifingSubItem - 3] += _wtof(GetItemText(modifingItem, modifingSubItem));
@@ -447,8 +447,8 @@ void CMyListCtrlExt::HideEditor(BOOL bUpdate)
         if(((CButton *)AfxGetMainWnd()->GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED)
             MarkNotEnoughCell(modifingItem, modifingSubItem);
 
-        modifingItem = 0;
-        modifingSubItem = 0;
+        modifingItem = -1;
+        modifingSubItem = -1;
 
         RefreshAverage();
     }
@@ -509,4 +509,9 @@ ClassMap *CMyListCtrlExt::getClassMap(std::vector<StudentInf> &container)
     }
 
     return pclassMap;
+}
+
+bool CMyListCtrlExt::HasData()
+{
+    return GetItemCount() > 2;
 }

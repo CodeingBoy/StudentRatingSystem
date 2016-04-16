@@ -30,7 +30,7 @@ class CMyListCtrlExt :
         CEdit m_Edit;
         bool isCorrect = true;
         double total[4] = { 0.0 };
-        int modifingItem = 0, modifingSubItem = 0;
+        int modifingItem = -1, modifingSubItem = -1;
     public:
         CMyListCtrlExt();
         ~CMyListCtrlExt();
@@ -56,5 +56,6 @@ class CMyListCtrlExt :
         void HideEditor(BOOL bUpdate = TRUE);
         bool SaveAwardList(CStuFileHandler &handler);
         ClassMap *getClassMap(std::vector<StudentInf> &container);
+        bool HasData();
 };
 

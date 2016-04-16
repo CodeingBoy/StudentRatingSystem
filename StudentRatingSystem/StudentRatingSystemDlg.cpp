@@ -241,6 +241,11 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 
 void CStudentRatingSystemDlg::OnBnClickedExport()
 {
+    if (!m_studentInfList.HasData()) {
+        MessageBox(_T("列表中没有数据"), _T("无数据"), MB_ICONERROR);
+        return;
+    }
+
     CFileDialog filedlg(FALSE, _T("csv"), NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST,
                         _T("逗号分隔符文件(*.csv)|*.csv|文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
     if (filedlg.DoModal() != IDOK) // 取消了
@@ -278,6 +283,10 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 {
+    if (!m_studentInfList.HasData()) {
+        MessageBox(_T("列表中没有数据"), _T("无数据"), MB_ICONERROR);
+        return;
+    }
     if (!m_studentInfList.isDataCorrect())  {
         MessageBox(_T("您的数据不完整，无法进行评定。"), _T("数据不完整"), MB_ICONERROR);
         return;
@@ -291,6 +300,10 @@ void CStudentRatingSystemDlg::OnBnClickedevaluateaward1()
 
 void CStudentRatingSystemDlg::OnBnClickedevaluateaward2()
 {
+    if (!m_studentInfList.HasData()) {
+        MessageBox(_T("列表中没有数据"), _T("无数据"), MB_ICONERROR);
+        return;
+    }
     if (!m_studentInfList.isDataCorrect()) {
         MessageBox(_T("您的数据不完整，无法进行评定。"), _T("数据不完整"), MB_ICONERROR);
         return;
@@ -315,6 +328,10 @@ void CStudentRatingSystemDlg::OnBnClickedDeleteall()
 
 void CStudentRatingSystemDlg::OnBnClickedCheck()
 {
+    if (!m_studentInfList.HasData()) {
+        MessageBox(_T("列表中没有数据"), _T("无数据"), MB_ICONERROR);
+        return;
+    }
     if (m_studentInfList.MarkIncorrectCell()) {
         MessageBox(_T("恭喜，您的数据完整。"), _T("数据完整"), MB_ICONINFORMATION);
     } else {
@@ -324,6 +341,10 @@ void CStudentRatingSystemDlg::OnBnClickedCheck()
 
 void CStudentRatingSystemDlg::OnBnClickedExportAward()
 {
+    if (!m_studentInfList.HasData()) {
+        MessageBox(_T("列表中没有数据"), _T("无数据"), MB_ICONERROR);
+        return;
+    }
 
     CFileDialog filedlg(FALSE, _T("txt"), NULL, OFN_CREATEPROMPT | OFN_PATHMUSTEXIST ,
                         _T("文本文件(*.txt)|*.txt||"), NULL, 0, TRUE);
