@@ -75,6 +75,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>D:\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -92,6 +94,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -189,12 +193,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CSVParser.h" />
+    <ClInclude Include="FileHandler.h" />
     <ClInclude Include="HeaderCtrlExt.h" />
     <ClInclude Include="ListCtrlExt.h" />
     <ClInclude Include="MsgHook.h" />
     <ClInclude Include="MyListCtrlExt.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StuCSVParser.h" />
     <ClInclude Include="StudentInf.h" />
     <ClInclude Include="StudentRatingSystem.h" />
     <ClInclude Include="StudentRatingSystemDlg.h" />
@@ -202,6 +209,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSVParser.cpp" />
+    <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="HeaderCtrlExt.cpp" />
     <ClCompile Include="ListCtrlExt.cpp" />
     <ClCompile Include="MsgHook.cpp" />
@@ -212,6 +221,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StuCSVParser.cpp" />
     <ClCompile Include="StudentRatingSystem.cpp" />
     <ClCompile Include="StudentRatingSystemDlg.cpp" />
     <ClCompile Include="StuFileHandler.cpp" />

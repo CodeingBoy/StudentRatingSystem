@@ -7,6 +7,7 @@
 #include "StudentRatingSystemDlg.h"
 #include "afxdialogex.h"
 #include "StuFileHandler.h"
+#include "StuCSVParser.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +28,7 @@ class CAboutDlg : public CDialogEx
 #endif
 
     protected:
-        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+        virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV 支持
 
 // 实现
     protected:
@@ -40,7 +41,7 @@ CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
 {
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+void CAboutDlg::DoDataExchange(CDataExchange *pDX)
 {
     CDialogEx::DoDataExchange(pDX);
 }
@@ -54,13 +55,13 @@ END_MESSAGE_MAP()
 
 
 
-CStudentRatingSystemDlg::CStudentRatingSystemDlg(CWnd* pParent /*=NULL*/)
+CStudentRatingSystemDlg::CStudentRatingSystemDlg(CWnd *pParent /*=NULL*/)
     : CDialogEx(IDD_STUDENTRATINGSYSTEM_DIALOG, pParent)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CStudentRatingSystemDlg::DoDataExchange(CDataExchange* pDX)
+void CStudentRatingSystemDlg::DoDataExchange(CDataExchange *pDX)
 {
     CDialogEx::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_STUINFLIST, m_studentInfList);
@@ -94,7 +95,7 @@ BOOL CStudentRatingSystemDlg::OnInitDialog()
     ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
     ASSERT(IDM_ABOUTBOX < 0xF000);
 
-    CMenu* pSysMenu = GetSystemMenu(FALSE);
+    CMenu *pSysMenu = GetSystemMenu(FALSE);
     if (pSysMenu != NULL) {
         BOOL bNameValid;
         CString strAboutMenu;
@@ -191,14 +192,14 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
 
     bool haveHeader;
     switch (reply)  {
-    case IDYES:
-        haveHeader = true;
-        break;
-    case IDNO:
-        haveHeader = false;
-        break;
-    default:
-        return;
+        case IDYES:
+            haveHeader = true;
+            break;
+        case IDNO:
+            haveHeader = false;
+            break;
+        default:
+            return;
     }
 
     CStuFileHandler handler(filedlg.GetPathName());
@@ -211,21 +212,23 @@ void CStudentRatingSystemDlg::OnBnClickedImport()
         return; // 立刻析构掉
     }
 
-    if (handler.ParseFile(haveHeader, &m_studentInfList)) {
-        if (handler.HasDataError())
+    CStuCSVParser parser(&handler);
+
+    if (parser.Parse(haveHeader, &m_studentInfList)) {
+        if (parser.HasDataError())
             MessageBox(_T("程序发现您的文件中缺少了一部分信息，这些信息可能使得程序统计功能无法正常运行，因此已作标红处理。\n"
                           "建议您审阅数据以保证数据的正确性。"), _T("文件缺少信息"), MB_ICONERROR);
 
-        if (handler.HasExtraInf())
+        if (parser.HasExtraInf())
             MessageBox(_T("程序发现您的文件中含有额外的信息，这些信息可能已过期，因此已作丢弃处理。\n"
                           "建议您审阅数据以保证数据的正确性。"), _T("文件含有额外的信息"), MB_ICONINFORMATION);
 
-        int parsedLine;
-        if ((parsedLine = handler.GetParsedLine()) == 0) {
+        unsigned int parsedLine;
+        if ((parsedLine = parser.GetParsedLine()) == 0) {
             MessageBox(_T("您的数据文件为空，因此未导入任何数据"), _T("导入失败"), MB_ICONERROR);
         } else {
             CString str;
-            str.Format(_T("已导入 %d 条数据"), handler.GetParsedLine());
+            str.Format(_T("已导入 %d 条数据"), parsedLine);
             MessageBox(str, _T("导入成功"), MB_ICONINFORMATION);
             m_studentInfList.RefreshAverage();
         }
@@ -245,14 +248,14 @@ void CStudentRatingSystemDlg::OnBnClickedExport()
 
     bool haveHeader;
     switch (reply) {
-    case IDYES:
-        haveHeader = true;
-        break;
-    case IDNO:
-        haveHeader = false;
-        break;
-    default:
-        return;
+        case IDYES:
+            haveHeader = true;
+            break;
+        case IDNO:
+            haveHeader = false;
+            break;
+        default:
+            return;
     }
 
     CStuFileHandler handler(filedlg.GetPathName(), false);

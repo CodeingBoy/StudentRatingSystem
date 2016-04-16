@@ -51,6 +51,15 @@
     <ClInclude Include="StuFileHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CSVParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StuCSVParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StudentRatingSystem.cpp">
@@ -75,6 +84,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="StuFileHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CSVParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StuCSVParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileHandler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

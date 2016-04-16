@@ -33,11 +33,11 @@ CMyListCtrlExt::~CMyListCtrlExt()
 
 }
 
-BOOL CMyListCtrlExt::OnNMDblclk(NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CMyListCtrlExt::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+    NM_LISTVIEW *pNMListView = (NM_LISTVIEW *)pNMHDR;
     if (pNMListView) {
         int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
@@ -177,7 +177,7 @@ void CMyListCtrlExt::RefreshAverage()
         return;
     }
 
-    double average[4] = { 0,0,0,0 };
+    double average[4] = { 0, 0, 0, 0 };
     CalculateAverage(average);
 
     CString average_str[4];
@@ -226,6 +226,8 @@ std::vector<StudentInf> CMyListCtrlExt::EvaluateAward(std::vector<StudentInf> *p
             rtnList.push_back(*rtnIterator);
         }
     }
+
+    delete pclassMap;
 
     return rtnList;
 }
@@ -295,7 +297,7 @@ StudentInf CMyListCtrlExt::GetData(int row)
     return inf;
 }
 
-void CMyListCtrlExt::SyncToList(std::vector<StudentInf>* plist)
+void CMyListCtrlExt::SyncToList(std::vector<StudentInf> *plist)
 {
 
     InitializeList();
@@ -375,7 +377,7 @@ void CMyListCtrlExt::OnLvnDeleteitem(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+    NM_LISTVIEW *pNMListView = (NM_LISTVIEW *)pNMHDR;
     if (pNMListView) {
         int nItem = pNMListView->iItem, nSubItem = pNMListView->iSubItem;
 
@@ -468,12 +470,14 @@ bool CMyListCtrlExt::SaveAwardList(CStuFileHandler &handler)
         handler.WriteLine(_T("")); // »»ÐÐ
     }
 
+    delete pclassMap;
+
     return true;
 }
 
-ClassMap* CMyListCtrlExt::getClassMap(std::vector<StudentInf> &container)
+ClassMap *CMyListCtrlExt::getClassMap(std::vector<StudentInf> &container)
 {
-    ClassMap *pclassMap = new std::multimap<CString, StudentInf*>;
+    ClassMap *pclassMap = new std::multimap<CString, StudentInf *>;
 
     for (std::vector<StudentInf>::iterator classListIterator = container.begin();
             classListIterator != container.end(); classListIterator++) {
