@@ -84,7 +84,8 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
         if (mark[i] == _T("-1.0")) {
             SetItemText(newline_index, i + 3, _T("´íÎó"));
             SetCellColors(newline_index, i + 3, COLOR_ERR, -1);
-        } else {
+        }
+        else {
             SetItemText(newline_index, i + 3, mark[i]);
         }
     }
@@ -92,11 +93,13 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
     if (inf.hasAward == -1) {
         SetItemText(newline_index, 7, _T("N/A"));
         SetItemText(newline_index, 8, _T("N/A"));
-    } else {
+    }
+    else {
         if (inf.hasAward == 1) {
             SetItemText(newline_index, 7, _T("ÊÇ"));
             SetCellColors(newline_index, 7, COLOR_YES, -1);
-        } else {
+        }
+        else {
             SetItemText(newline_index, 7, _T("·ñ"));
             SetCellColors(newline_index, 7, COLOR_NO, -1);
         }
@@ -104,7 +107,8 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
         if (inf.hasAward == 2) {
             SetItemText(newline_index, 8, _T("ÊÇ"));
             SetCellColors(newline_index, 8, COLOR_YES, -1);
-        } else {
+        }
+        else {
             SetItemText(newline_index, 8, _T("·ñ"));
             SetCellColors(newline_index, 8, COLOR_NO, -1);
         }
@@ -207,7 +211,10 @@ void CMyListCtrlExt::MarkNotEnoughCell(bool isMark)
 {
     for (int i = 0; i < GetItemCount() - 2; i++) {
         for (int j = 3; j <= 5; j++) {
-            if (_wtof(GetItemText(i, j)) < 75 && isMark)
+            CString itemText = GetItemText(i, j);
+            if (!wcscmp(itemText, _T("´íÎó")))
+                continue;
+            if (_wtof(itemText) < 75 && isMark)
                 SetCellColors(i, j, COLOR_NOT_ENOUGH, -1);
             else
                 SetCellColors(i, j, -1, -1);
@@ -217,7 +224,7 @@ void CMyListCtrlExt::MarkNotEnoughCell(bool isMark)
 
 void CMyListCtrlExt::MarkNotEnoughCell(int nRow, int nCol)
 {
-    if(_wtof(GetItemText(nRow, nCol)) < 75)
+    if (_wtof(GetItemText(nRow, nCol)) < 75)
         SetCellColors(nRow, nCol, COLOR_NOT_ENOUGH, -1);
     else
         SetCellColors(nRow, nCol, -1, -1);
@@ -457,7 +464,7 @@ void CMyListCtrlExt::HideEditor(BOOL bUpdate)
                           + _wtof(GetItemText(modifingItem, 5)));
         SetItemText(modifingItem, 6, totalScore);
 
-        if(((CButton *)AfxGetMainWnd()->GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED)
+        if (((CButton *)AfxGetMainWnd()->GetDlgItem(IDC_MARK_SCORE))->GetCheck() == BST_CHECKED)
             MarkNotEnoughCell(modifingItem, modifingSubItem);
 
         modifingItem = -1;
