@@ -84,8 +84,7 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
         if (mark[i] == _T("-1.0")) {
             SetItemText(newline_index, i + 3, _T("´íÎó"));
             SetCellColors(newline_index, i + 3, COLOR_ERR, -1);
-        }
-        else {
+        } else {
             SetItemText(newline_index, i + 3, mark[i]);
         }
     }
@@ -93,13 +92,11 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
     if (inf.hasAward == -1) {
         SetItemText(newline_index, 7, _T("N/A"));
         SetItemText(newline_index, 8, _T("N/A"));
-    }
-    else {
+    } else {
         if (inf.hasAward == 1) {
             SetItemText(newline_index, 7, _T("ÊÇ"));
             SetCellColors(newline_index, 7, COLOR_YES, -1);
-        }
-        else {
+        } else {
             SetItemText(newline_index, 7, _T("·ñ"));
             SetCellColors(newline_index, 7, COLOR_NO, -1);
         }
@@ -107,8 +104,7 @@ void CMyListCtrlExt::AddNewLine(StudentInf &inf)
         if (inf.hasAward == 2) {
             SetItemText(newline_index, 8, _T("ÊÇ"));
             SetCellColors(newline_index, 8, COLOR_YES, -1);
-        }
-        else {
+        } else {
             SetItemText(newline_index, 8, _T("·ñ"));
             SetCellColors(newline_index, 8, COLOR_NO, -1);
         }
