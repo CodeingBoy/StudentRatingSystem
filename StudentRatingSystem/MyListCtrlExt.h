@@ -10,9 +10,9 @@
 #define IDC_EDIT 1007
 
 #define COLOR_ERR			RGB(255, 0, 0)
-#define COLOR_YES			RGB(134, 71, 63)
-#define COLOR_NO			RGB(100, 106, 88)
-#define COLOR_NOT_ENOUGH	RGB(191, 103, 102)
+#define COLOR_YES			RGB(128, 255, 0)
+#define COLOR_NO			RGB(255, 128, 128)
+#define COLOR_NOT_ENOUGH	RGB(255, 128, 0)
 
 typedef std::multimap<CString, StudentInf *> ClassMap;
 

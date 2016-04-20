@@ -380,7 +380,7 @@ void CMyListCtrlExt::InitializeList()   // 初始化列表（可执行多次）
     int averageIndex = InsertItem(GetItemCount(), _T("平均值"));
     for (int i = 0; i < 4; i++)
         SetItemText(averageIndex, i + 3, _T("N/A"));
-    SetRowColors(averageIndex, RGB(28, 28, 28), -1);
+    SetRowColors(averageIndex, RGB(227, 227, 227), -1);
     SetRowReadOnly(averageIndex);
 
     InsertItem(GetItemCount() - 1, _T("          +"));
